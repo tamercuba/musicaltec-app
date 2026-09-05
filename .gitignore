@@ -1,0 +1,10 @@
+.nrepl-port
+.rebel_readline_history
+.lein-repl-history
+.lein-failures
+.lsp/
+.clj-kondo/.cache/
+.shadow-cljs/
+node_modules/
+target/
+config.env

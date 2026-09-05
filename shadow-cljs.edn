@@ -1,0 +1,8 @@
+{:source-paths ["src/cljs" "src/cljc"]
+ :builds
+ {:app {:target :browser
+        :output-dir "resources/public/js/compiled"
+        :asset-path "/js/compiled"
+        :modules {:main {:init-fn musicaltec-app.core/init}}
+        :dev {:compiler-options {:devtools true}}
+        :release {:compiler-options {:optimizations :advanced}}}}}

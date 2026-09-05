@@ -1,0 +1,20 @@
+{
+  "name": "musicaltec-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sistema de gestão da oficina Musical Tec",
+  "scripts": {
+    "build:css": "tailwindcss -i resources/tailwind.css -o target/resources/public/css/main.css",
+    "build:css:watch": "tailwindcss -i resources/tailwind.css -o target/resources/public/css/main.css --watch",
+    "build:css:min": "tailwindcss -i resources/tailwind.css -o target/resources/public/css/main.css --minify"
+  },
+  "dependencies": {
+    "flowbite-react": "^0.12.17",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  }
+}
