@@ -1,6 +1,7 @@
 {:source-paths ["src/cljs" "src/cljc"]
  :nrepl {:port 7888
-         :init-ns user}
+         :init-ns user
+         :write-port-file true}
  :builds
  {:app {:target :browser
         :output-dir "resources/public/js/compiled"

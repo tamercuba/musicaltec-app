@@ -1,10 +1,12 @@
 (ns musicaltec-app.system
-  (:require [integrant.core :as ig]
-            [ring.adapter.jetty :as jetty]
-            [musicaltec-app.adapters.api.router :as api.router]
-            [musicaltec-app.adapters.db.core :as db.core]
-            [musicaltec-app.adapters.db.customer :as db.customer]
-            [schema.core :as s])
+  (:require
+   [integrant.core :as ig]
+   [musicaltec-app.adapters.api.router :as api.router]
+   [musicaltec-app.adapters.db.core :as db.core]
+   [musicaltec-app.adapters.db.customer :as db.customer]
+   [musicaltec-app.adapters.db.registry :as db.registry]
+   [ring.adapter.jetty :as jetty]
+   [schema.core :as s])
   (:gen-class))
 
 (defn- read-config []
@@ -16,7 +18,7 @@
   (read-config))
 
 (defmethod ig/init-key :musicaltec-app/conn [_ {:keys [config]}]
-  (db.core/connect (:datomic-uri config) db.customer/schema))
+  (db.core/connect (:datomic-uri config) db.registry/schemas))
 
 (defmethod ig/init-key :musicaltec-app/adapters [_ {:keys [conn]}]
   {:db/customer-repo (db.customer/->repository conn)})
