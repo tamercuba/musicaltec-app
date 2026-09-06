@@ -7,7 +7,17 @@
             [musicaltec-app.adapters.api.auth :as api.auth]
             [musicaltec-app.adapters.api.customer :as api.customer]
             [musicaltec-app.adapters.api.middleware :as api.middleware]
+            [musicaltec-app.ports.value :as value]
             [schema.core :as s]))
+
+(def ^:private coercion
+  (rcs/create
+   {:matchers
+    {:body     {:default rcs/default-coercion-matcher
+                :formats {"application/json" (some-fn value/value-object-matcher
+                                                      rcs/json-coercion-matcher)}}
+     :string   {:default (some-fn value/value-object-matcher rcs/string-coercion-matcher)}
+     :response {:default rcs/default-coercion-matcher}}}))
 
 (s/defn router :- s/Any
   [adapters :- s/Any
@@ -15,7 +25,7 @@
   (ring/router
    [["/api/login" {:post (api.auth/login-handler (:password config))}]
     ["/api" api.customer/routes]]
-   {:data {:coercion rcs/coercion
+   {:data {:coercion coercion
            :middleware [rrc/coerce-exceptions-middleware
                         rrc/coerce-request-middleware
                         api.middleware/coerce-dto

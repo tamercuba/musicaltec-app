@@ -1,10 +1,7 @@
 (ns musicaltec-app.domain.errors
-  (:require [schema.core :as s]))
+  (:require [schema.core :as s]
+            [musicaltec-app.ports.dtos.out.error :as dtos.out.error]))
 
-(s/defn not-found! :- s/Any
-  []
-  (throw (ex-info "Not found" {:type ::not-found})))
-
-(s/defn conflict! :- s/Any
-  [message :- (s/maybe s/Str)]
-  (throw (ex-info (or message "Conflict") {:type ::conflict :message message})))
+(s/defn fail! :- s/Any
+  [code :- dtos.out.error/ErrorCode]
+  (throw (ex-info (name code) {:code code})))

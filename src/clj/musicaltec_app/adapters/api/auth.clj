@@ -12,8 +12,6 @@
             (subs decoded (inc i))))))))
 
 (s/defn login-handler :- (s/=> s/Any s/Any)
-  "POST /api/login com Basic Auth (`base64(\":senha\")`). Em caso de sucesso
-  estabelece a sessão (`:user`) e devolve o token CSRF."
   [password :- s/Str]
   (fn [{:keys [session] :as request}]
     (if (and password (= password (basic-auth-password request)))
@@ -22,4 +20,4 @@
          :session (assoc session :user true :csrf-token csrf)
          :body {:ok true :csrf-token csrf}})
       {:status 401
-       :body {:status 401 :type "unauthorized" :message "Credenciais inválidas"}})))
+       :body {:code :auth/invalid-credentials}})))

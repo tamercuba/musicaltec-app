@@ -1,14 +1,21 @@
 (ns musicaltec-app.adapters.api.middleware
-  (:require [musicaltec-app.domain.errors :as errors]
-            [ring.middleware.session :as session]
+  (:require [ring.middleware.session :as session]
             [ring.middleware.session.memory :as memory]
             [schema.core :as s]))
 
 (def ^:private Handler    (s/=> s/Any s/Any))
 (def ^:private Middleware (s/=> Handler Handler))
 
+(def ^:private error-status
+  {:auth/unauthorized        401
+   :auth/invalid-credentials 401
+   :auth/invalid-csrf-token  403
+   :customer/tax-id-taken    409
+   :customer/email-taken     409
+   :resource/not-found       404
+   :resource/conflict        409})
+
 (s/defn coerce-dto :- Handler
-  "Junta `:parameters` (body+query+path, já coerçados) num único `:dto` no request."
   [handler :- Handler]
   (fn [request]
     (handler (assoc request :dto (reduce merge (vals (:parameters request)))))))
@@ -25,17 +32,11 @@
     (try
       (handler request)
       (catch clojure.lang.ExceptionInfo e
-        (let [{:keys [type message]} (ex-data e)]
-          (cond
-            (= type ::errors/not-found)
-            {:status 404
-             :body {:status 404 :type "not-found" :message "Não encontrado"}}
-
-            (= type ::errors/conflict)
-            {:status 409
-             :body {:status 409 :type "conflict" :message message}}
-
-            :else (throw e)))))))
+        (let [{:keys [code]} (ex-data e)]
+          (if-let [status (get error-status code)]
+            {:status status
+             :body   {:code code}}
+            (throw e)))))))
 
 (s/defn wrap-session :- Handler
   [handler :- Handler]
@@ -47,7 +48,7 @@
     (if (or (:user session) (= uri "/api/login"))
       (handler request)
       {:status 401
-       :body {:status 401 :type "unauthorized" :message "Não autenticado"}})))
+       :body   {:code :auth/unauthorized}})))
 
 (s/defn wrap-csrf :- Handler
   [handler :- Handler]
@@ -61,4 +62,4 @@
       (if valid?
         (handler request)
         {:status 403
-         :body {:status 403 :type "csrf" :message "Token CSRF inválido"}}))))
+         :body   {:code :auth/invalid-csrf-token}}))))

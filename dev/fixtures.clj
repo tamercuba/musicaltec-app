@@ -4,14 +4,14 @@
 
 (def sample-customers
   [{:name   "Paulo Souza"
-    :phones ["11 99999-0001"]
+    :phones ["11999990001"]
     :email  "paulo@example.com"
-    :kind   "person"
-    :tax-id "111.444.777-35"}
+    :kind   :person
+    :tax-id "11144477735"}
    {:name   "Ronaldo Lima"
-    :phones ["11 98888-0002"]
-    :kind   "person"
-    :tax-id "529.982.247-25"}])
+    :phones ["11988880002"]
+    :kind   :person
+    :tax-id "52998224725"}])
 
 (defn seed! [adapters]
   (let [created (mapv (fn [dto]

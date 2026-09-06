@@ -10,7 +10,7 @@
   "Normalized page number between 1 and `pages`"
   [page :- (s/maybe s/Int)
    pages :- s/Int]
-  (min pages (or page 1)))
+  (min pages (max 1 (or page 1))))
 
 (s/defn offset :- s/Int
   [page     :- s/Int

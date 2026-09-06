@@ -4,7 +4,8 @@
 
 (s/defn normalize :- s/Str
   [s :- (s/maybe s/Str)]
-  (-> (or s "")
+  (-> s
+      (or "")
       str/trim
       str/lower-case
       (java.text.Normalizer/normalize java.text.Normalizer$Form/NFD)

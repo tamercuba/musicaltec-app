@@ -20,8 +20,9 @@
 (defn seed! []
   (fixtures/seed! (adapters)))
 
-(go)
-
 (comment
   (seed!)
-  (reset))
+  (go)
+  (halt)
+  (reset)
+  (reset-all))

@@ -9,43 +9,29 @@
 (defn- blank->nil [s]
   (some-> s str/trim not-empty))
 
-(defn- digits [s]
-  (str/replace (or s "") #"\D" ""))
-
-(defn- ->kind [kind]
-  (case kind
-    "person"  :person
-    "company" :company
-    nil))
-
-(defn- ->tax-id [kind tax-id]
-  (some-> (blank->nil tax-id)
-          (str/upper-case)
-          (str/replace #"[^0-9A-Z]" "")
-          not-empty))
-
-(defn- ->phones [phones]
-  (->> phones
-       (keep blank->nil)
-       (mapv digits)))
+(defn- ->model [id name phones email kind tax-id]
+  (let [email (blank->nil email)]
+    (cond-> {:customer/id     id
+             :customer/name   (str/trim name)
+             :customer/phones phones
+             :customer/kind   kind
+             :customer/tax-id tax-id}
+      email (assoc :customer/email email))))
 
 (s/defn dto->model :- models.customer/Customer
-  "CreateCustomerIn/UpdateCustomerIn → Customer (id gerado se ausente)."
-  [{:keys [id name phones email kind tax-id]} :- dtos.in.customer/CreateCustomerIn]
-  (let [email (blank->nil email)]
-    (cond-> {:customer/id     (or id (random-uuid))
-             :customer/name   (str/trim name)
-             :customer/phones (->phones phones)
-             :customer/kind   (->kind kind)
-             :customer/tax-id (->tax-id kind tax-id)}
-      email (assoc :customer/email email))))
+  [{:keys [name phones email kind tax-id]} :- dtos.in.customer/CreateCustomerIn]
+  (->model (random-uuid) name phones email kind tax-id))
+
+(s/defn update-dto->model :- models.customer/Customer
+  [{:keys [id name phones email kind tax-id]} :- dtos.in.customer/UpdateCustomerIn]
+  (->model id name phones email kind tax-id))
 
 (s/defn model->dto :- dtos.out.customer/CustomerOut
   [customer :- models.customer/Customer]
   (cond-> {:id      (str (:customer/id customer))
            :name    (:customer/name customer)
            :phones  (:customer/phones customer)
-           :kind    (name (:customer/kind customer))
+           :kind    (:customer/kind customer)
            :tax-id  (:customer/tax-id customer)}
     (:customer/email customer) (assoc :email (:customer/email customer))))
 

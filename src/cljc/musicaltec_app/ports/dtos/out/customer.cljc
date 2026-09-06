@@ -6,7 +6,7 @@
    :name   s/Str
    :phones [s/Str]
    (s/optional-key :email) s/Str
-   :kind   (s/enum "person" "company")
+   :kind   (s/enum :person :company)
    :tax-id s/Str})
 
 (s/defschema ListCustomersOut
@@ -16,9 +16,3 @@
    :total-pages s/Int
    :total       s/Int
    :per-page    s/Int})
-
-(s/defschema ErrorOut
-  {:status  s/Int
-   :type    s/Str
-   :message s/Str
-   (s/optional-key :errors) s/Any})

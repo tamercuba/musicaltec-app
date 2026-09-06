@@ -14,25 +14,29 @@
 
 (deftest filter-matching-blank-query
   (is (= ["Ana" "Bruno"]
-         (->> [(->customer "Ana") (->customer "Bruno")]
-              (logic.customer/filter-matching (->query ""))
-              (map :customer/name)))))
+         (map :customer/name
+              (logic.customer/filter-matching
+               [(->customer "Ana") (->customer "Bruno")]
+               (->query ""))))))
 
 (deftest filter-matching-by-name
   (is (= ["João da Silva"]
-         (->> [(->customer "João da Silva") (->customer "Maria")]
-              (logic.customer/filter-matching (->query "joao"))
-              (map :customer/name))))
+         (map :customer/name
+              (logic.customer/filter-matching
+               [(->customer "João da Silva") (->customer "Maria")]
+               (->query "joao")))))
   (is (= ["Bruno"]
-         (->> [(->customer "Ana") (->customer "Bruno")]
-              (logic.customer/filter-matching (->query "brun"))
-              (map :customer/name)))))
+         (map :customer/name
+              (logic.customer/filter-matching
+               [(->customer "Ana") (->customer "Bruno")]
+               (->query "brun"))))))
 
 (deftest filter-matching-no-match
   (is (= []
-         (->> [(->customer "Ana") (->customer "Bruno")]
-              (logic.customer/filter-matching (->query "xyz"))
-              (map :customer/name)))))
+         (map :customer/name
+              (logic.customer/filter-matching
+               [(->customer "Ana") (->customer "Bruno")]
+               (->query "xyz"))))))
 
 (deftest sort-by-name
   (let [sorted (logic.customer/sort-by-name

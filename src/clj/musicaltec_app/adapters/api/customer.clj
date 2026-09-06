@@ -5,9 +5,9 @@
             [musicaltec-app.domain.use-cases.customer :as use-cases.customer]
             [musicaltec-app.ports.dtos.in.customer :as dtos.in.customer]))
 
-(defn- ok [body]      {:status 200 :body body})
-(defn- created [body] {:status 201 :body body})
-(defn- no-content []  {:status 204})
+(defn- ok         [body] {:status 200 :body body})
+(defn- created    [body] {:status 201 :body body})
+(defn- no-content [_]    {:status 204})
 
 (s/defn create-handler :- s/Any
   [{:keys [dto adapters]} :- s/Any]
@@ -35,22 +35,24 @@
 (s/defn update-handler :- s/Any
   [{:keys [dto adapters]} :- s/Any]
   (-> dto
-      mappers.customer/dto->model
+      mappers.customer/update-dto->model
       (use-cases.customer/update adapters)
       mappers.customer/model->dto
       ok))
 
 (s/defn delete-handler :- s/Any
   [{:keys [dto adapters]} :- s/Any]
-  (use-cases.customer/delete (:id dto) adapters)
-  (no-content))
+  (-> dto
+      :id
+      (use-cases.customer/delete adapters)
+      no-content))
 
 (def routes
   [["/customers"
-    {:post {:handler create-handler
-            :parameters {:body dtos.in.customer/CreateCustomerIn}}
-     :get  {:handler list-handler
-            :parameters {:query dtos.in.customer/ListCustomersIn}}}]
+    {:post   {:handler create-handler
+              :parameters {:body dtos.in.customer/CreateCustomerIn}}
+     :get    {:handler list-handler
+              :parameters {:query dtos.in.customer/ListCustomersIn}}}]
    ["/customers/:id"
     {:get    {:handler get-handler
               :parameters {:path {:id s/Uuid}}}
