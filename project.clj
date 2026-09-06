@@ -15,7 +15,7 @@
                  [reagent "1.2.0"]
                  [re-frame "1.4.7"]]
   :main ^:skip-aot musicaltec-app.system
-  :source-paths ["src/clj" "src/cljc"]
+  :source-paths ["src/clj" "src/cljc" "src/cljs"]
   :resource-paths ["resources"]
   :test-paths ["test/clj"]
   :test-selectors

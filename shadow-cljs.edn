@@ -2,10 +2,13 @@
  :nrepl {:port 7888
          :init-ns user
          :write-port-file true}
+ :dev-http {3000 {:root "resources/public"
+                  :proxy-url "http://localhost:8080"
+                  :proxy-predicate api-proxy/proxy-api?}}
  :builds
  {:app {:target :browser
         :output-dir "resources/public/js/compiled"
         :asset-path "/js/compiled"
         :modules {:main {:init-fn musicaltec-app.core/init}}
-        :dev {:compiler-options {:devtools true}}
+        :dev {:devtools {:enabled true}}
         :release {:compiler-options {:optimizations :advanced}}}}}

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Musical Tec</title>
+    <meta name="description" content="Musical Tec — sistema de gestão" />
+    <link rel="icon" href="/img/glider.png" />
+    <script>
+      (function () {
+        var saved = null;
+        try { saved = localStorage.getItem("color-theme"); } catch (e) {}
+        var prefersDark =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.classList.toggle(
+          "dark",
+          saved === "dark" || (!saved && prefersDark)
+        );
+      })();
+    </script>
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="/js/compiled/main.js"></script>
+  </body>
+</html>
