@@ -7,6 +7,7 @@
 node_modules/
 target/
 config.env
+config.edn
 .nrepl-port
 resources/public/css/
 resources/public/js/

@@ -3,7 +3,7 @@
 
 (def person-kind #{:person :company})
 
-(s/defschema PersonKind (s/enum apply person-kind))
+(s/defschema PersonKind (apply s/enum person-kind))
 
 (s/defschema Customer
   {:customer/id                     s/Uuid

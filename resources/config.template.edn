@@ -1,0 +1,11 @@
+;; Template de configuração do Musical Tec.
+;; Copie para `app/config.edn` e edite os valores. O `config.edn` é ignorado
+;; pelo git (não contém segredos commitados).
+;;
+;; O arquivo é lido com aero, então você pode usar, se quiser, os tags
+;; `#env` (variável de ambiente) e `#or` (fallback), ex.:
+;;   :port #long #or [#env APP_PORT 8080]
+;; e também `#profile {:dev {...} :prod {...}}` para config por ambiente.
+{:port        8080
+ :password    "CHANGE_ME"
+ :datomic-uri "datomic:mem://musicaltec"}

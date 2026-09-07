@@ -1,5 +1,7 @@
 (ns musicaltec-app.system
   (:require
+   [aero.core :as aero]
+   [clojure.java.io :as io]
    [integrant.core :as ig]
    [musicaltec-app.adapters.api.router :as api.router]
    [musicaltec-app.adapters.db.core :as db.core]
@@ -9,10 +11,16 @@
    [schema.core :as s])
   (:gen-class))
 
+(def default-config
+  {:port        8080
+   :password    "CHANGE_ME"
+   :datomic-uri "datomic:mem://musicaltec"})
+
 (defn- read-config []
-  {:port        (Integer/parseInt (or (System/getenv "APP_PORT") "8080"))
-   :password    (or (System/getenv "APP_PASSWORD") "CHANGE_ME")
-   :datomic-uri (or (System/getenv "DATOMIC_URI") "datomic:mem://musicaltec")})
+  (let [file (io/file "config.edn")]
+    (if (.exists file)
+      (aero/read-config file)
+      default-config)))
 
 (defmethod ig/init-key :musicaltec-app/config [_ _]
   (read-config))

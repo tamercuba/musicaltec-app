@@ -11,7 +11,7 @@
   "translate-x-0")
 
 (def backdrop-class
-  "fixed inset-0 z-[45] bg-neutral-quaternary bg-opacity-50")
+  "fixed inset-0 z-[45] bg-neutral-quaternary/50")
 
 (def header-class
   "border-b border-default pb-4 mb-5 flex items-center")
