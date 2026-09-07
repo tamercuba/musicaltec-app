@@ -1,4 +1,4 @@
-(ns musicaltec-app.format
+(ns musicaltec-app.core.format
   (:require [clojure.string :as str]))
 
 (defn digits

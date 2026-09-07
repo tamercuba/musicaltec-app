@@ -1,4 +1,4 @@
-(ns musicaltec-app.views.customers
+(ns musicaltec-app.customers.views
   (:require [clojure.string :as str]
             [re-frame.core :as rf]
             [musicaltec-app.components.alert :as alert]
@@ -10,7 +10,7 @@
             [musicaltec-app.components.pagination :as pagination]
             [musicaltec-app.components.spinner :as spinner]
             [musicaltec-app.components.table :as table]
-            [musicaltec-app.views.layout :as layout]))
+            [musicaltec-app.core.views.layout :as layout]))
 
 (defn- search-form [query]
   [:form {:on-submit (fn [e]
@@ -84,8 +84,10 @@
       :open? open?
       :on-close #(rf/dispatch [:customers/close-drawer])
       :body [:div
-             (when error
-               (alert/alert {:kind :danger :body error}))
+             (when (seq error)
+               (alert/alert {:kind :danger
+                             :body (into [:div {:class "space-y-1"}]
+                                         (map (fn [m] [:div m]) error))}))
              (customer-form)]})))
 
 (defn customers-page []

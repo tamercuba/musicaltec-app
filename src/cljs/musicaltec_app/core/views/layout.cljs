@@ -1,11 +1,11 @@
-(ns musicaltec-app.views.layout
+(ns musicaltec-app.core.views.layout
   (:require [re-frame.core :as rf]
             [reitit.frontend.easy :as rfe]
             [musicaltec-app.components.bottom-nav :as bottom-nav]
             [musicaltec-app.components.card :as card]
             [musicaltec-app.components.icons :as icons]
             [musicaltec-app.components.theme-toggle :as theme-toggle]
-            [musicaltec-app.config :as config]))
+            [musicaltec-app.core.config :as config]))
 
 (defn navbar []
   [:nav {:class "fixed top-0 z-40 w-full bg-neutral-primary-soft border-b border-default"}

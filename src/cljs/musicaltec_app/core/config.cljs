@@ -1,4 +1,4 @@
-(ns musicaltec-app.config)
+(ns musicaltec-app.core.config)
 
 (def app-name "Musical Tec")
 

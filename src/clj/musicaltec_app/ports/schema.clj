@@ -2,9 +2,9 @@
   (:require [schema.core :as s]))
 
 (s/defrecord Unique [schema :- s/Any
-                     mode :- s/Keyword]
+                     mode   :- s/Keyword]
   s/Schema
-  (spec [_] (s/spec schema))
+  (spec [_]    (s/spec schema))
   (explain [_] (list 'unique (s/explain schema) mode)))
 
 (s/defn unique :- Unique

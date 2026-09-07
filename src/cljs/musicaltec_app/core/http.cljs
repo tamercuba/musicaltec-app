@@ -1,4 +1,4 @@
-(ns musicaltec-app.http
+(ns musicaltec-app.core.http
   "Efeito re-frame :http baseado em js/fetch.
 
   Contrato do efeito:
@@ -12,7 +12,7 @@
   Cookies da sessão são enviados via `credentials: same-origin`. Para métodos
   não-seguros, o header `X-CSRF-Token` é anexado quando há token salvo."
   (:require [re-frame.core :as rf]
-            [musicaltec-app.storage :as storage]))
+            [musicaltec-app.core.storage :as storage]))
 
 (defn- unsafe-method? [method]
   (contains? #{:post :put :delete :patch} method))
@@ -32,15 +32,23 @@
        :or {method :get}}]
    (let [token   (storage/get-item :csrf-token)
          headers (cond-> {"Accept" "application/json"}
-                   body (assoc "Content-Type" "application/json")
-                   basic-password (assoc "Authorization"
-                                         (str "Basic " (js/btoa (str ":" basic-password))))
+
+                   body
+                   (assoc "Content-Type" "application/json")
+
+                   basic-password
+                   (assoc "Authorization"
+                          (str "Basic " (js/btoa (str ":" basic-password))))
+
                    (and (unsafe-method? method) token)
                    (assoc "X-CSRF-Token" token))
+
          opts    (cond-> {:method (name method)
                           :credentials "same-origin"
                           :headers (clj->js headers)}
-                   body (assoc :body (js/JSON.stringify (clj->js body))))]
+
+                   body
+                   (assoc :body (js/JSON.stringify (clj->js body))))]
      (-> (js/fetch url (clj->js opts))
          (.then (fn [resp]
                   (let [status (.-status resp)]

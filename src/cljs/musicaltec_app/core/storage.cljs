@@ -1,4 +1,4 @@
-(ns musicaltec-app.storage
+(ns musicaltec-app.core.storage
   "Wrappers sobre o localStorage (toleram ambientes onde ele não existe).")
 
 (defn get-item

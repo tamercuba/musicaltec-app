@@ -1,4 +1,4 @@
-(ns musicaltec-app.views.error-boundary
+(ns musicaltec-app.core.views.error-boundary
   (:require [reagent.core :as r]))
 
 (defn error-boundary []
