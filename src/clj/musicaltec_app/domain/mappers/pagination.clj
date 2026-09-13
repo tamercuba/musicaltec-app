@@ -7,11 +7,16 @@
 
 (def ^:private default-per-page 10)
 
+(defn- parse-long-or [s default]
+  (if (and s (re-matches #"\d+" s))
+    (Long/parseLong s)
+    default))
+
 (s/defn dto->model :- models.pagination/Query
   [{:keys [q page per-page]} :- dtos.in.customer/ListCustomersIn]
   {:query    (or q "")
-   :page     (or page 1)
-   :per-page (or per-page default-per-page)})
+   :page     (parse-long-or page 1)
+   :per-page (parse-long-or per-page default-per-page)})
 
 (s/defn model->dto :- dtos.out.customer/ListCustomersOut
   [paginated :- models.customer/PaginatedCustomer

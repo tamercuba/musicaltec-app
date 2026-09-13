@@ -62,19 +62,10 @@
     :company (company-tax-id-valid? tax-id)
     false))
 
-(s/defrecord ValueObject [spec-schema :- s/Any
-                          explain-sym :- s/Any]
-  s/Schema
-  (spec [_] (s/spec spec-schema))
-  (explain [_] explain-sym))
-
 (def Phone
-  (->ValueObject
-   (s/constrained s/Str phone-valid?)
-   'phone))
+  (s/constrained s/Str phone-valid? 'phone))
 
 (def TaxId
-  (->ValueObject
-   (s/constrained s/Str #(or (person-tax-id-valid? %)
-                             (company-tax-id-valid? %)))
-   'tax-id))
+  (s/constrained s/Str #(or (person-tax-id-valid? %)
+                            (company-tax-id-valid? %))
+                 'tax-id))

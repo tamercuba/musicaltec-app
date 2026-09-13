@@ -21,5 +21,5 @@
 
 (s/defschema ListCustomersIn
   {(s/optional-key :q)        s/Str
-   (s/optional-key :page)     s/Int
-   (s/optional-key :per-page) s/Int})
+   (s/optional-key :page)     s/Str
+   (s/optional-key :per-page) s/Str})

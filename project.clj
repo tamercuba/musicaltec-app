@@ -27,7 +27,6 @@
    "shadow"      ["run" "-m" "shadow.cljs.devtools.cli"]}
   :profiles
   {:dev {:source-paths ["dev"]
-         :dependencies [[nubank/state-flow "5.20.1"]
-                        [ring/ring-mock "0.6.2"]
-                        [prismatic/schema-generators "0.1.5"]]
+          :dependencies [[nubank/state-flow "5.20.1"]
+                         [ring/ring-mock "0.6.2"]]
          :jvm-opts ["-XX:-OmitStackTraceInFastThrow"]}})

@@ -80,7 +80,7 @@
               :form    {:name   (:name customer)
                         :phones (if (seq (:phones customer)) (vec (:phones customer)) [""])
                         :email  (or (:email customer) "")
-                        :kind   (:kind customer)
+                        :kind   (keyword (:kind customer))
                         :tax-id (:tax-id customer)}})))
 
 (rf/reg-event-db
@@ -88,7 +88,7 @@
  (fn [db _]
    (-> db
        (assoc-in [:customers :drawer :open?] false)
-       (assoc-in [:customers :drawer :mode] nil)
+       (assoc-in [:customers :drawer :mode]  nil)
        (assoc-in [:customers :drawer :error] nil))))
 
 (rf/reg-event-db
@@ -138,16 +138,18 @@
 
 (defn- explain-errors [dto]
   (when-let [error (s/check dtos.in.customer/CreateCustomerIn dto)]
-    (let [kind   (:kind dto)
-          fields (when (map? error) error)]
-      (cond-> []
-        (and fields (contains? fields :name))   (conj "Nome é obrigatório.")
-        (and fields (contains? fields :phones)) (conj "Informe ao menos um telefone válido.")
-        (and fields (contains? fields :email))  (conj "E-mail inválido.")
-        (and fields (contains? fields :tax-id)) (conj (if (= kind :company) "CNPJ inválido." "CPF inválido."))
-        (not fields)                            (conj (if (= kind :company)
-                                                        "CNPJ não corresponde ao tipo."
-                                                        "CPF não corresponde ao tipo."))))))
+    (let [kind (:kind dto)]
+      (if-not (map? error)
+        [(if (= kind :company) "CNPJ não corresponde ao tipo." "CPF não corresponde ao tipo.")]
+        (let [msgs (cond-> []
+                     (contains? error :name)   (conj "Nome é obrigatório.")
+                     (contains? error :phones) (conj "Informe ao menos um telefone válido.")
+                     (contains? error :email)  (conj "E-mail inválido.")
+                     (contains? error :kind)   (conj "Tipo inválido.")
+                     (contains? error :tax-id) (conj (if (= kind :company) "CNPJ inválido." "CPF inválido.")))]
+          (if (seq msgs)
+            msgs
+            [(if (= kind :company) "CNPJ não corresponde ao tipo." "CPF não corresponde ao tipo.")]))))))
 
 (rf/reg-event-fx
  :customers/save

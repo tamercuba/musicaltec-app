@@ -2,7 +2,8 @@
   (:require [datomic.api :as d]
             [musicaltec-app.adapters.api.router :as api.router]
             [musicaltec-app.adapters.db.core :as db.core]
-            [musicaltec-app.adapters.db.customer :as db.customer]))
+            [musicaltec-app.adapters.db.customer :as db.customer]
+            [musicaltec-app.adapters.logs.writer :as logs]))
 
 (def password "test-password")
 
@@ -13,7 +14,8 @@
     {:conn    conn
      :handler (api.router/handler
                (api.router/router
-                {:db/customer-repo (db.customer/->repository conn)}
+                {:db/customer-repo (db.customer/->repository conn)
+                 :log/logger       (logs/->writer-logger System/out)}
                 {:password password}))}))
 
 (defn close! [ctx]

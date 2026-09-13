@@ -1,26 +1,27 @@
 (ns musicaltec-app.core
-  (:require
-   [re-frame.core :as rf]
-   [reagent.dom :as rdom]
-   [reitit.frontend.easy :as rfe]
-   [musicaltec-app.auth.db :as auth-db]
-   [musicaltec-app.auth.events]
-   [musicaltec-app.auth.subs]
-   [musicaltec-app.customers.db :as customers-db]
-   [musicaltec-app.customers.events]
-   [musicaltec-app.customers.subs]
-   [musicaltec-app.core.db :as app-db]
-   [musicaltec-app.core.http]
-   [musicaltec-app.core.router :as router]
-   [musicaltec-app.core.storage :as storage]
-   [musicaltec-app.core.theme :as theme]
-   [musicaltec-app.core.views :as views]
-   [musicaltec-app.core.views.error-boundary :as error-boundary]))
+  (:require [re-frame.core :as rf]
+            [reagent.dom :as rdom]
+            [reitit.frontend.easy :as rfe]
+            [musicaltec-app.auth.db :as auth-db]
+            [musicaltec-app.auth.events]
+            [musicaltec-app.auth.subs]
+            [musicaltec-app.customers.db :as customers-db]
+            [musicaltec-app.customers.events]
+            [musicaltec-app.customers.subs]
+            [musicaltec-app.core.db :as app-db]
+            [musicaltec-app.core.http]
+            [musicaltec-app.core.router :as router]
+            [musicaltec-app.core.storage :as storage]
+            [musicaltec-app.core.theme :as theme]
+            [musicaltec-app.core.views :as views]
+            [musicaltec-app.core.views.error-boundary :as error-boundary]
+            [musicaltec-app.logs :as logs]))
 
 (def default-db
   (merge app-db/default-db
          auth-db/default-db
-         customers-db/default-db))
+         customers-db/default-db
+         {:log/logger (logs/->console-logger)}))
 
 (rf/reg-event-fx
  :app/init

@@ -1,30 +1,49 @@
 (ns fixtures
-  (:require [musicaltec-app.domain.models.customer :as models.customer]
+  (:require [schema.core :as s]
+            [generators :as generators]
+            [musicaltec-app.domain.mappers.customer :as mappers.customer]
             [musicaltec-app.domain.use-cases.customer :as use-cases.customer]
-            [schema-generators.generators :as g]))
+            [musicaltec-app.ports.dtos.in.customer :as dtos.in.customer]))
 
-(defn- unique-str [prefix]
-  (str prefix (random-uuid)))
+(def ^:private max-name-length 100)
+(def ^:private max-email-length 100)
 
-;; O schema-generators gera os demais campos (name, phones, kind...).
-;; Só "costuramos" aqui os campos que precisam ser únicos no banco
-;; (:customer/tax-id e :customer/email usam :db.unique/value).
-(defn- ensure-unique-fields [customer]
-  (assoc customer
-         :customer/tax-id (unique-str "tax-")
-         :customer/email  (str (unique-str "cliente-") "@example.com")))
+(defn- bounded [s limit]
+  (if (> (count s) limit)
+    (subs s 0 limit)
+    s))
+
+(defn- generate [{:keys [name email] :as dto}]
+  (cond-> dto
+    name  (update :name  bounded max-name-length)
+    email (update :email bounded max-email-length)))
 
 (def sample-customers
-  (vec (g/sample 200
-                 models.customer/Customer
-                 {}                                                ; leaf-generators (padrão)
-                 {models.customer/Customer (g/fmap ensure-unique-fields)})))
+  [{:name   "Paulo Souza"
+    :phones ["11999990001"]
+    :email  "paulo@example.com"
+    :kind   :person
+    :tax-id "11144477735"}
+   {:name   "Ronaldo Nazario"
+    :phones ["11988880002"]
+    :kind   :person
+    :tax-id "52998224725"}])
 
-(defn seed! [adapters]
-  (let [created (mapv (fn [model]
-                        (use-cases.customer/create
-                         model
-                         adapters))
-                      sample-customers)]
+(defn- create! [adapters dto]
+  (-> (s/validate dtos.in.customer/CreateCustomerIn dto)
+      mappers.customer/dto->model
+      (use-cases.customer/create adapters)))
+
+(defn seed!
+  "Seeds the fixed sample customers."
+  [adapters]
+  (let [created (mapv #(create! adapters (generate %)) sample-customers)]
+    (println "Seeded" (count created) "customers.")
+    created))
+
+(defn seed-many!
+  "Seeds `n` random valid customers."
+  [n adapters]
+  (let [created (mapv #(create! adapters %) (generators/generate-customers n))]
     (println "Seeded" (count created) "customers.")
     created))

@@ -6,6 +6,7 @@
 ;; `#env` (variável de ambiente) e `#or` (fallback), ex.:
 ;;   :port #long #or [#env APP_PORT 8080]
 ;; e também `#profile {:dev {...} :prod {...}}` para config por ambiente.
-{:port        8080
+{:env         :prod
+ :port        8080
  :password    "CHANGE_ME"
  :datomic-uri "datomic:mem://musicaltec"}

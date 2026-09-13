@@ -73,22 +73,24 @@
        :placeholder (if (= kind :company) "00.000.000/0000-00" "000.000.000-00")
        :on-change #(rf/dispatch [:customers/form-update :tax-id (.. % -target -value)])})
      [:div {:class "h-4"}]
-     (button/button {:label (if saving? "Salvando..." "Salvar") :type "submit" :kind :primary
+     (button/button {:label (if saving? "Salvando..." "Salvar")
+                     :type  "submit"
+                     :kind  :primary
                      :disabled saving?})]))
 
 (defn- customer-drawer []
   (let [{:keys [open? mode error]} @(rf/subscribe [:customers/drawer])]
     (drawer/drawer
-     {:id "customer-drawer"
-      :title (if (= mode :edit) "Editar cliente" "Novo cliente")
-      :open? open?
+     {:id       "customer-drawer"
+      :title    (if (= mode :edit) "Editar cliente" "Novo cliente")
+      :open?    open?
       :on-close #(rf/dispatch [:customers/close-drawer])
-      :body [:div
-             (when (seq error)
-               (alert/alert {:kind :danger
-                             :body (into [:div {:class "space-y-1"}]
-                                         (map (fn [m] [:div m]) error))}))
-             (customer-form)]})))
+      :body     [:div
+                 (when (seq error)
+                   (alert/alert {:kind :danger
+                                 :body (into [:div {:class "space-y-1"}]
+                                             (map (fn [m] [:div m]) error))}))
+                 (customer-form)]})))
 
 (defn customers-page []
   (let [items       @(rf/subscribe [:customers/items])
@@ -101,10 +103,10 @@
         error       @(rf/subscribe [:customers/error])]
     (layout/page
      (card/card {:class "overflow-hidden"}
-                [:div {:class "flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4"}
-                 [:h1 {:class "text-2xl font-semibold text-heading"} "Clientes"]
-                 [:div {:class "flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto"}
-                  (search-form query)
+                [:div   {:class "flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4"}
+                 [:h1   {:class "text-2xl font-semibold text-heading"} "Clientes"]
+                 [:div  {:class "flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto"}
+                  (search-form   query)
                   (button/button {:label "Novo cliente" :kind :primary :type "button"
                                   :on-click #(rf/dispatch [:customers/open-create])})]]
                 (when error

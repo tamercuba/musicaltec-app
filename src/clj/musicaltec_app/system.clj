@@ -7,12 +7,14 @@
    [musicaltec-app.adapters.db.core :as db.core]
    [musicaltec-app.adapters.db.customer :as db.customer]
    [musicaltec-app.adapters.db.registry :as db.registry]
+   [musicaltec-app.adapters.logs.writer :as logs]
    [ring.adapter.jetty :as jetty]
    [schema.core :as s])
   (:gen-class))
 
 (def default-config
-  {:port        8080
+  {:env         :dev
+   :port        8080
    :password    "CHANGE_ME"
    :datomic-uri "datomic:mem://musicaltec"})
 
@@ -22,14 +24,20 @@
       (aero/read-config file)
       default-config)))
 
+(defn- log-target [{:keys [env]}]
+  (if (= env :prod)
+    (io/file "logs/musicaltec.log")
+    System/out))
+
 (defmethod ig/init-key :musicaltec-app/config [_ _]
   (read-config))
 
 (defmethod ig/init-key :musicaltec-app/conn [_ {:keys [config]}]
   (db.core/connect (:datomic-uri config) db.registry/schemas))
 
-(defmethod ig/init-key :musicaltec-app/adapters [_ {:keys [conn]}]
-  {:db/customer-repo (db.customer/->repository conn)})
+(defmethod ig/init-key :musicaltec-app/adapters [_ {:keys [conn config]}]
+  {:db/customer-repo (db.customer/->repository conn)
+   :log/logger       (logs/->writer-logger (log-target config))})
 
 (defmethod ig/init-key :musicaltec-app/router [_ {:keys [adapters config]}]
   (api.router/router adapters config))
@@ -46,7 +54,8 @@
 (def system-config
   {:musicaltec-app/config   {}
    :musicaltec-app/conn     {:config   (ig/ref :musicaltec-app/config)}
-   :musicaltec-app/adapters {:conn     (ig/ref :musicaltec-app/conn)}
+   :musicaltec-app/adapters {:conn     (ig/ref :musicaltec-app/conn)
+                             :config   (ig/ref :musicaltec-app/config)}
    :musicaltec-app/router   {:adapters (ig/ref :musicaltec-app/adapters)
                              :config   (ig/ref :musicaltec-app/config)}
    :musicaltec-app/handler  {:router   (ig/ref :musicaltec-app/router)}
