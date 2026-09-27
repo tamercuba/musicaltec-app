@@ -10,21 +10,21 @@
    :cleanup aux.system/close!}
 
   (flow "authenticate"
-    (http/login! aux.system/password)
-    (http/expect {:status 200} :login))
+        (http/login! aux.system/password)
+        (http/expect {:status 200} :login))
 
   (flow "creates a customer"
-    (http/request! :created :post "/api/customers"
-                   {:body (aux.customers/->create-dto)})
-    (http/expect {:status 201 :body {:name "João da Silva"}} :created))
+        (http/request! :created :post "/api/customers"
+                       {:body (aux.customers/->create-dto)})
+        (http/expect {:status 201 :body {:name "João da Silva"}} :created))
 
   (flow "rejects a duplicate tax id"
-    (http/request! :dup-tax :post "/api/customers"
-                   {:body (aux.customers/->create-dto :name "Another Customer")})
-    (http/expect {:status 409} :dup-tax))
+        (http/request! :dup-tax :post "/api/customers"
+                       {:body (aux.customers/->create-dto :name "Another Customer")})
+        (http/expect {:status 409} :dup-tax))
 
   (flow "rejects a duplicate email"
-    (http/request! :dup-email :post "/api/customers"
-                   {:body (aux.customers/->create-dto :name "Another"
-                                                      :tax-id "529.982.247-25")})
-    (http/expect {:status 409} :dup-email)))
+        (http/request! :dup-email :post "/api/customers"
+                       {:body (aux.customers/->create-dto :name "Another"
+                                                          :tax-id "52998224725")})
+        (http/expect {:status 409} :dup-email)))

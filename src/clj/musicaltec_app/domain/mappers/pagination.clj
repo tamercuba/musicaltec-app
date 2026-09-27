@@ -18,6 +18,22 @@
    :page     (parse-long-or page 1)
    :per-page (parse-long-or per-page default-per-page)})
 
+(s/defn query->model :- models.pagination/Query
+  "Generic query DTO -> Query model (for any list endpoint with q/page/per-page)."
+  [{:keys [q page per-page]} :- s/Any]
+  {:query    (or q "")
+   :page     (parse-long-or page 1)
+   :per-page (parse-long-or per-page default-per-page)})
+
+(s/defn paginated->dto :- s/Any
+  "Generic paginated model -> list DTO, mapping each item with `item->dto`."
+  [paginated :- s/Any
+   item->dto :- (s/=> s/Any s/Any)]
+  (->> paginated
+       :items
+       (mapv item->dto)
+       (assoc paginated :items)))
+
 (s/defn model->dto :- dtos.out.customer/ListCustomersOut
   [paginated :- models.customer/PaginatedCustomer
    item->dto :- (s/=> dtos.out.customer/CustomerOut models.customer/Customer)]

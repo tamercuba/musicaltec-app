@@ -57,3 +57,14 @@
        (map first)
        (map mapper)
        (vec)))
+
+(s/defn get-by-pattern :- s/Any
+  [conn      :- s/Any
+   pattern   :- s/Any
+   lookup-ref :- s/Any
+   id-attr   :- s/Keyword
+   mapper    :- s/Any]
+  (let [entity (d/pull (d/db conn) pattern lookup-ref)]
+    (if (id-attr entity)
+      (mapper entity)
+      (errors/fail! :resource/not-found))))

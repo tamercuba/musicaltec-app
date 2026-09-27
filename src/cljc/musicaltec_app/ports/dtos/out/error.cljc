@@ -7,6 +7,8 @@
           :auth/invalid-csrf-token
           :customer/tax-id-taken
           :customer/email-taken
+          :financial-movement/stock-unavailable
+          :financial-movement/installments-mismatch
           :resource/not-found
           :resource/conflict))
 

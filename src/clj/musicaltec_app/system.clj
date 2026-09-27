@@ -6,6 +6,8 @@
    [musicaltec-app.adapters.api.router :as api.router]
    [musicaltec-app.adapters.db.core :as db.core]
    [musicaltec-app.adapters.db.customer :as db.customer]
+   [musicaltec-app.adapters.db.financial-movement :as db.financial-movement]
+   [musicaltec-app.adapters.db.stock-item :as db.stock-item]
    [musicaltec-app.adapters.db.registry :as db.registry]
    [musicaltec-app.adapters.logs.writer :as logs]
    [ring.adapter.jetty :as jetty]
@@ -36,8 +38,10 @@
   (db.core/connect (:datomic-uri config) db.registry/schemas))
 
 (defmethod ig/init-key :musicaltec-app/adapters [_ {:keys [conn config]}]
-  {:db/customer-repo (db.customer/->repository conn)
-   :log/logger       (logs/->writer-logger (log-target config))})
+  {:db/customer-repo            (db.customer/->repository conn)
+   :db/stock-item-repo          (db.stock-item/->repository conn)
+   :db/financial-movement-repo  (db.financial-movement/->repository conn)
+   :log/logger                  (logs/->writer-logger (log-target config))})
 
 (defmethod ig/init-key :musicaltec-app/router [_ {:keys [adapters config]}]
   (api.router/router adapters config))

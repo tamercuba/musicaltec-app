@@ -62,6 +62,11 @@
     :company (company-tax-id-valid? tax-id)
     false))
 
+(defn non-negative-int?
+  "Non-negative integer (>= 0)."
+  [x]
+  (not (neg? x)))
+
 (def Phone
   (s/constrained s/Str phone-valid? 'phone))
 
@@ -69,3 +74,6 @@
   (s/constrained s/Str #(or (person-tax-id-valid? %)
                             (company-tax-id-valid? %))
                  'tax-id))
+
+(def NonNegativeInt
+  (s/constrained s/Int non-negative-int? 'non-negative-int))

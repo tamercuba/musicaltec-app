@@ -31,3 +31,9 @@
   (is (not (value/tax-id-matches-kind? :person "11222333000181")))
   (is (value/tax-id-matches-kind? :company "11222333000181"))
   (is (not (value/tax-id-matches-kind? :company "11144477735"))))
+
+(deftest non-negative-int-validates
+  (is (nil? (s/check value/NonNegativeInt 0)))
+  (is (nil? (s/check value/NonNegativeInt 5)))
+  (is (some? (s/check value/NonNegativeInt -1)))
+  (is (some? (s/check value/NonNegativeInt 3.5))))

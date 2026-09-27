@@ -6,6 +6,8 @@
             [ring.middleware.params :as ring-params]
             [musicaltec-app.adapters.api.auth :as api.auth]
             [musicaltec-app.adapters.api.customer :as api.customer]
+            [musicaltec-app.adapters.api.financial-movement :as api.financial-movement]
+            [musicaltec-app.adapters.api.stock-item :as api.stock-item]
             [musicaltec-app.adapters.api.middleware :as api.middleware]
             [schema.core :as s]))
 
@@ -17,7 +19,9 @@
    config :- s/Any]
   (ring/router
    [["/api/login" {:post (api.auth/login-handler (:password config))}]
-    ["/api" api.customer/routes]]
+    ["/api" (into [] cat [api.customer/routes
+                          api.stock-item/routes
+                          api.financial-movement/routes])]]
    {:data {:coercion coercion
            :middleware [rrc/coerce-exceptions-middleware
                         rrc/coerce-request-middleware
