@@ -8,6 +8,9 @@
             [musicaltec-app.customers.db :as customers-db]
             [musicaltec-app.customers.events]
             [musicaltec-app.customers.subs]
+            [musicaltec-app.stock.db :as stock-db]
+            [musicaltec-app.stock.events]
+            [musicaltec-app.stock.subs]
             [musicaltec-app.core.db :as app-db]
             [musicaltec-app.core.http]
             [musicaltec-app.core.router :as router]
@@ -21,6 +24,7 @@
   (merge app-db/default-db
          auth-db/default-db
          customers-db/default-db
+         stock-db/default-db
          {:log/logger (logs/->console-logger)}))
 
 (rf/reg-event-fx

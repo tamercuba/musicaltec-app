@@ -7,15 +7,15 @@
 (def ^:private Middleware (s/=> Handler Handler))
 
 (def ^:private error-status
-  {:auth/unauthorized                       401
-   :auth/invalid-credentials                401
-   :auth/invalid-csrf-token                 403
-   :customer/tax-id-taken                   409
-   :customer/email-taken                    409
-   :financial-movement/stock-unavailable    422
-   :financial-movement/installments-mismatch 422
-   :resource/not-found                      404
-   :resource/conflict                       409})
+  {:auth/unauthorized                         401
+   :auth/invalid-credentials                  401
+   :auth/invalid-csrf-token                   403
+   :customer/tax-id-taken                     409
+   :customer/email-taken                      409
+   :financial-movement/stock-unavailable      422
+   :financial-movement/down-payment-invalid   422
+   :resource/not-found                        404
+   :resource/conflict                         409})
 
 (s/defn coerce-dto :- Handler
   [handler :- Handler]

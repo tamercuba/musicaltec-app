@@ -7,6 +7,7 @@
 @source "../src/cljs";
 @source "../src/cljc";
 @source "../node_modules/flowbite";
+@source "../node_modules/flowbite-datepicker";
 
 @font-face {
   font-family: 'Inter';

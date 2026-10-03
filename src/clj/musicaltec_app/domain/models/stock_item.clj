@@ -2,22 +2,17 @@
   (:require [musicaltec-app.ports.value :as value]
             [schema.core :as s]))
 
-(def statuses #{:in-stock :sold})
-
-(s/defschema Status (apply s/enum statuses))
-
 (s/defschema StockItem
-  {:stock-item/id                       s/Uuid
-   :stock-item/name                     s/Str
-   (s/optional-key :stock-item/brand)   s/Str
-   :stock-item/quantity                 value/NonNegativeInt
-   :stock-item/cost                     value/NonNegativeInt
-   :stock-item/default-price            value/NonNegativeInt
-   (s/optional-key :stock-item/acquired-at) s/Inst
-   :stock-item/status                   Status
-   (s/optional-key :stock-item/serial)  s/Str
-   (s/optional-key :stock-item/notes)   s/Str
-   (s/optional-key :stock-item/sold-at) s/Inst})
+  #:stock-item{:id                                      s/Uuid
+               :name                                    s/Str
+               (s/optional-key :stock-item/brand)       s/Str
+               :quantity                                value/NonNegativeInt
+               :cost                                    value/NonNegativeInt
+               :default-price                           value/NonNegativeInt
+               (s/optional-key :stock-item/acquired-at) s/Inst
+               :available?                              s/Bool
+               (s/optional-key :stock-item/serial)      s/Str
+               (s/optional-key :stock-item/notes)       s/Str})
 
 (s/defschema PaginatedStockItem
   {:items       [StockItem]

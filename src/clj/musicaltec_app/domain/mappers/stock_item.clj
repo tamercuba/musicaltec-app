@@ -1,5 +1,7 @@
 (ns musicaltec-app.domain.mappers.stock-item
-  (:require [musicaltec-app.domain.models.stock-item :as models.stock-item]
+  (:require [musicaltec-app.domain.mappers.pagination :as mappers.pagination]
+            [musicaltec-app.domain.models.pagination :as models.pagination]
+            [musicaltec-app.domain.models.stock-item :as models.stock-item]
             [musicaltec-app.ports.dtos.in.stock-item :as dtos.in.stock-item]
             [musicaltec-app.ports.dtos.out.stock-item :as dtos.out.stock-item]
             [musicaltec-app.ports.dtos.db.stock-item :as dtos.db.stock-item]
@@ -8,65 +10,66 @@
 (def ^:private default-quantity 1)
 (def ^:private default-money 0)
 
-(defn- ->model [id name brand quantity cost default-price acquired-at status serial notes sold-at]
-  (cond-> {:stock-item/id            id
-           :stock-item/name          name
-           :stock-item/quantity      (or quantity default-quantity)
-           :stock-item/cost          (or cost default-money)
-           :stock-item/default-price (or default-price default-money)
-           :stock-item/status        status}
+(s/defn query->model :- models.pagination/Query
+  [{:keys [available] :as dto} :- dtos.in.stock-item/ListStockItemsIn]
+  (cond-> (mappers.pagination/query->model dto)
+    available (assoc :available? (= available "true"))))
+
+(defn- ->model [id name brand quantity cost default-price acquired-at available? serial notes]
+  (cond-> #:stock-item{:id            id
+                       :name          name
+                       :quantity      (or quantity default-quantity)
+                       :cost          (or cost default-money)
+                       :default-price (or default-price default-money)
+                       :available?    (boolean available?)}
     brand       (assoc :stock-item/brand brand)
     acquired-at (assoc :stock-item/acquired-at acquired-at)
     serial      (assoc :stock-item/serial serial)
-    notes       (assoc :stock-item/notes notes)
-    sold-at     (assoc :stock-item/sold-at sold-at)))
+    notes       (assoc :stock-item/notes notes)))
 
 (s/defn dto->model :- models.stock-item/StockItem
   [{:keys [name brand quantity cost default-price serial notes]} :- dtos.in.stock-item/CreateStockItemIn]
-  (->model (random-uuid) name brand quantity cost default-price nil :in-stock serial notes nil))
+  (->model (random-uuid) name brand quantity cost default-price nil true serial notes))
 
 (s/defn update-dto->model :- models.stock-item/StockItem
   [{:keys [id name brand quantity cost default-price serial notes]} :- dtos.in.stock-item/UpdateStockItemIn]
-  (->model id name brand quantity cost default-price nil :in-stock serial notes nil))
+  (->model id name brand quantity cost default-price nil (pos? (or quantity default-quantity)) serial notes))
 
 (s/defn model->dto :- dtos.out.stock-item/StockItemOut
-  [{:stock-item/keys [id name brand quantity cost default-price acquired-at status serial notes sold-at]} :- models.stock-item/StockItem]
+  [{:stock-item/keys [id name brand quantity cost default-price acquired-at available? serial notes]} :- models.stock-item/StockItem]
   (cond-> {:id            (str id)
            :name          name
            :quantity      quantity
            :cost          cost
            :default-price default-price
-           :status        status}
+           :available?    available?}
     brand       (assoc :brand brand)
     acquired-at (assoc :acquired-at acquired-at)
     serial      (assoc :serial serial)
-    notes       (assoc :notes notes)
-    sold-at     (assoc :sold-at sold-at)))
+    notes       (assoc :notes notes)))
 
 (s/defn db->model :- models.stock-item/StockItem
-  [{:stock-item/keys [id name brand quantity cost default-price acquired-at status serial notes sold-at]} :- dtos.db.stock-item/StockItemDb]
-  (cond-> {:stock-item/id            id
-           :stock-item/name          name
-           :stock-item/quantity      quantity
-           :stock-item/cost          cost
-           :stock-item/default-price default-price
-           :stock-item/status        status}
+  [{:stock-item/keys [id name brand quantity cost default-price acquired-at available? serial notes]} :- dtos.db.stock-item/StockItemDb]
+  (cond-> #:stock-item{:id            id
+                       :name          name
+                       :quantity      quantity
+                       :cost          cost
+                       :default-price default-price
+                       :available?    available?}
     brand       (assoc :stock-item/brand brand)
     acquired-at (assoc :stock-item/acquired-at acquired-at)
     serial      (assoc :stock-item/serial serial)
-    notes       (assoc :stock-item/notes notes)
-    sold-at     (assoc :stock-item/sold-at sold-at)))
+    notes       (assoc :stock-item/notes notes)))
 
 (s/defn model->db :- dtos.db.stock-item/StockItemDb
-  [{:stock-item/keys [id name brand quantity cost default-price acquired-at status serial notes sold-at]} :- models.stock-item/StockItem]
-  (cond-> {:stock-item/id            id
-           :stock-item/name          name
-           :stock-item/quantity      quantity
-           :stock-item/cost          cost
-           :stock-item/default-price default-price
-           :stock-item/status        status}
+  [{:stock-item/keys [id name brand quantity cost default-price acquired-at available? serial notes]} :- models.stock-item/StockItem]
+  (cond-> #:stock-item{:id            id
+                       :name          name
+                       :quantity      quantity
+                       :cost          cost
+                       :default-price default-price
+                       :available?    available?}
     brand       (assoc :stock-item/brand brand)
     acquired-at (assoc :stock-item/acquired-at acquired-at)
     serial      (assoc :stock-item/serial serial)
-    notes       (assoc :stock-item/notes notes)
-    sold-at     (assoc :stock-item/sold-at sold-at)))
+    notes       (assoc :stock-item/notes notes)))

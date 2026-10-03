@@ -21,4 +21,5 @@
 (s/defschema ListStockItemsIn
   {(s/optional-key :q)        s/Str
    (s/optional-key :page)     s/Str
-   (s/optional-key :per-page) s/Str})
+   (s/optional-key :per-page) s/Str
+   (s/optional-key :available) s/Str})

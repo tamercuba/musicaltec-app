@@ -20,7 +20,7 @@
   [{:label "Início" :href (rfe/href :home) :icon-path icons/home-path :active? (= active-name :home)}
    {:label "OS" :href "#" :icon-path icons/os-path :active? false}
    {:label "Vendas" :href "#" :icon-path icons/sales-path :active? false}
-   {:label "Estoque" :href "#" :icon-path icons/inventory-path :active? false}
+   {:label "Estoque" :href (rfe/href :stock) :icon-path icons/inventory-path :active? (= active-name :stock)}
    {:label "Financeiro" :href "#" :icon-path icons/finances-path :active? false}
    {:label "Clientes" :href (rfe/href :customers) :icon-path icons/users-path :active? (= active-name :customers)}])
 

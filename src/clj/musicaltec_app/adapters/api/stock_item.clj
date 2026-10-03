@@ -9,39 +9,39 @@
 (defn- created    [body] {:status 201 :body body})
 (defn- no-content [_]    {:status 204})
 
-(s/defn create-handler :- s/Any
-  [{:keys [dto adapters]} :- s/Any]
+(defn create-handler
+  [{:keys [dto adapters]}]
   (-> dto
       mappers.stock-item/dto->model
       (use-cases.stock-item/create adapters)
       mappers.stock-item/model->dto
       created))
 
-(s/defn list-handler :- s/Any
-  [{:keys [dto adapters]} :- s/Any]
+(defn list-handler
+  [{:keys [dto adapters]}]
   (-> dto
-      mappers.pagination/query->model
+      mappers.stock-item/query->model
       (use-cases.stock-item/list adapters)
       (mappers.pagination/paginated->dto mappers.stock-item/model->dto)
       ok))
 
-(s/defn get-handler :- s/Any
-  [{:keys [dto adapters]} :- s/Any]
+(defn get-handler
+  [{:keys [dto adapters]}]
   (-> (:id dto)
       (use-cases.stock-item/get adapters)
       mappers.stock-item/model->dto
       ok))
 
-(s/defn update-handler :- s/Any
-  [{:keys [dto adapters]} :- s/Any]
+(defn update-handler
+  [{:keys [dto adapters]}]
   (-> dto
       mappers.stock-item/update-dto->model
       (use-cases.stock-item/update adapters)
       mappers.stock-item/model->dto
       ok))
 
-(s/defn delete-handler :- s/Any
-  [{:keys [dto adapters]} :- s/Any]
+(defn delete-handler
+  [{:keys [dto adapters]}]
   (-> dto
       :id
       (use-cases.stock-item/delete adapters)
@@ -49,15 +49,15 @@
 
 (def routes
   [["/stock-items"
-    {:post   {:handler create-handler
+    {:post   {:handler    create-handler
               :parameters {:body dtos.in.stock-item/CreateStockItemIn}}
-     :get    {:handler list-handler
+     :get    {:handler    list-handler
               :parameters {:query dtos.in.stock-item/ListStockItemsIn}}}]
    ["/stock-items/:id"
-    {:get    {:handler get-handler
+    {:get    {:handler    get-handler
               :parameters {:path {:id s/Uuid}}}
-     :put    {:handler update-handler
+     :put    {:handler    update-handler
               :parameters {:path {:id s/Uuid}
                            :body dtos.in.stock-item/CreateStockItemIn}}
-     :delete {:handler delete-handler
+     :delete {:handler    delete-handler
               :parameters {:path {:id s/Uuid}}}}]])

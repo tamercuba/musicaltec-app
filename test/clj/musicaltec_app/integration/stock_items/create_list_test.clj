@@ -13,7 +13,7 @@
 
   (flow "lists the created stock item"
         (http/request! :listed :get "/api/stock-items")
-        (http/expect {:status 200 :body {:total 1 :items [{:name "Sax Alto" :status "in-stock"}]}}
+        (http/expect {:status 200 :body {:total 1 :items [{:name "Sax Alto" :available? true}]}}
                      :listed))
 
   (flow "returns the stock item by id"

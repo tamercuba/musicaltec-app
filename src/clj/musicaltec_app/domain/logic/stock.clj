@@ -7,7 +7,7 @@
             [schema.core :as s]))
 
 (s/defn items-total :- s/Int
-  [items :- [models.stock/StockLine]]
+  [items :- [models.stock/StockLineInput]]
   (reduce + 0 (map (fn [{:stock-line/keys [quantity unit-price]}] (* quantity unit-price)) items)))
 
 (s/defn stock-available? :- s/Bool
@@ -15,15 +15,32 @@
    quantity :- value/NonNegativeInt]
   (>= (:stock-item/quantity item) quantity))
 
+(s/defn new-item->stock-item :- models.stock-item/StockItem
+  [{:stock-line/keys [name brand quantity unit-price default-price serial notes]} :- models.stock/NewItemLine]
+  (cond-> #:stock-item{:id            (random-uuid)
+                       :name          name
+                       :quantity      quantity
+                       :cost          unit-price
+                       :default-price (or default-price 0)
+                       :available?    true}
+    brand  (assoc :stock-item/brand brand)
+    serial (assoc :stock-item/serial serial)
+    notes  (assoc :stock-item/notes notes)))
+
 (s/defn apply-stock-effect :- models.stock-item/StockItem
-  [item      :- models.stock-item/StockItem
-   quantity  :- value/NonNegativeInt
-   direction :- models.financial-movement/Direction
-   sold-at   :- s/Inst]
-  (let [delta     (case direction :in (- quantity) :out quantity)
-        remaining (+ (:stock-item/quantity item) delta)]
-    (cond-> (assoc item :stock-item/quantity remaining)
-      (zero? remaining) (assoc :stock-item/status :sold :stock-item/sold-at sold-at))))
+  [item       :- models.stock-item/StockItem
+   quantity   :- value/NonNegativeInt
+   unit-price :- value/NonNegativeInt
+   direction  :- models.financial-movement/Direction]
+  (case direction
+    :out (assoc item
+                :stock-item/quantity   (+ (:stock-item/quantity item) quantity)
+                :stock-item/cost       unit-price
+                :stock-item/available? true)
+    :in (let [remaining (- (:stock-item/quantity item) quantity)]
+          (assoc item
+                 :stock-item/quantity   remaining
+                 :stock-item/available? (pos? remaining)))))
 
 (s/defmethod logic.financial-movement/->new :stock :- models.financial-movement/FinancialMovement
   [{:financial-movement/keys [direction date counterparty description shared? items]} :- models.financial-movement/FinancialMovementInput

@@ -13,9 +13,12 @@
       (str/includes? (logic.search/normalize (:stock-item/name item)) q)))
 
 (s/defn filter-matching :- [models.stock-item/StockItem]
-  [items       :- [models.stock-item/StockItem]
-   {:keys [query]} :- models.pagination/Query]
-  (filterv #(matches? % (logic.search/normalize query)) items))
+  [items                     :- [models.stock-item/StockItem]
+   {:keys [query available?]} :- models.pagination/Query]
+  (->> items
+       (filter #(matches? % (logic.search/normalize query)))
+       (filter #(or (nil? available?) (= available? (:stock-item/available? %))))
+       vec))
 
 (s/defn sort-by-name :- [models.stock-item/StockItem]
   [items :- [models.stock-item/StockItem]]

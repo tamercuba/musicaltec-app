@@ -10,22 +10,35 @@
             [schema.core :as s]))
 
 (s/defn register :- models.financial-movement/FinancialMovement
-  [{:financial-movement/keys [items direction date installments]
+  [{:financial-movement/keys [direction date installments-count down-payment]
     :as input} :- models.financial-movement/FinancialMovementInput
    {:keys [db/stock-item-repo db/financial-movement-repo]} :- ports.system/Adapters]
-  (let [total              (logic.stock/items-total items)
-        _                  (when-not (logic.financial-movement/installments-valid? installments total)
-                             (errors/fail! :financial-movement/installments-mismatch))
-        valid-installments (logic.financial-movement/->installments date installments total)
-        movement           (logic.financial-movement/->new input total valid-installments (random-uuid))]
+  (let [raw-items  (:financial-movement/items input)
+        resolved   (mapv (fn [line]
+                           (if-let [sid (:stock-line/stock-item-id line)]
+                             line
+                             (let [created (ports.db.stock-item/insert!
+                                            stock-item-repo
+                                            (logic.stock/new-item->stock-item line))]
+                               #:stock-line{:stock-item-id (:stock-item/id created)
+                                            :quantity      (:stock-line/quantity line)
+                                            :unit-price    (:stock-line/unit-price line)})))
+                         raw-items)
+        total      (logic.stock/items-total resolved)
+        _          (when-not (logic.financial-movement/down-payment-valid? down-payment total)
+                     (errors/fail! :financial-movement/down-payment-invalid))
+        installments (logic.financial-movement/->installments date installments-count down-payment total)
+        movement   (logic.financial-movement/->new (assoc input :financial-movement/items resolved) total installments (random-uuid))]
     (when (= direction :in)
-      (doseq [{:stock-line/keys [stock-item-id quantity]} items]
+      (doseq [{:stock-line/keys [stock-item-id quantity]} resolved]
         (let [item (ports.db.stock-item/get! stock-item-repo stock-item-id)]
           (when-not (logic.stock/stock-available? item quantity)
             (errors/fail! :financial-movement/stock-unavailable)))))
-    (doseq [{:stock-line/keys [stock-item-id quantity]} items]
-      (let [item    (ports.db.stock-item/get! stock-item-repo stock-item-id)
-            updated (logic.stock/apply-stock-effect item quantity direction date)]
+    (doseq [line raw-items
+            :when (contains? line :stock-line/stock-item-id)]
+      (let [{:stock-line/keys [stock-item-id quantity unit-price]} line
+            item    (ports.db.stock-item/get! stock-item-repo stock-item-id)
+            updated (logic.stock/apply-stock-effect item quantity unit-price direction)]
         (ports.db.stock-item/update! stock-item-repo updated)))
     (ports.db.financial-movement/insert! financial-movement-repo movement)))
 

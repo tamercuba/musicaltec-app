@@ -13,27 +13,23 @@
 (s/defschema InstallmentStatus (apply s/enum installment-statuses))
 
 (s/defschema Installment
-  #:installment{:number                s/Int
-                :due-date              s/Inst
-                :amount                value/NonNegativeInt
-                :status                InstallmentStatus
-                (s/optional-key :responsible) s/Uuid
-                (s/optional-key :paid-at)     s/Inst})
-
-(s/defschema InstallmentInput
-  #:installment{:due-date s/Inst
-                :amount   value/NonNegativeInt})
+  #:installment{:number                              s/Int
+                :due-date                            s/Inst
+                :amount                              value/NonNegativeInt
+                :status                              InstallmentStatus
+                (s/optional-key :installment/responsible) s/Uuid
+                (s/optional-key :installment/paid-at)     s/Inst})
 
 (s/defschema FinancialMovementBase
-  #:financial-movement{:id                        s/Uuid
-                       :type                      Type
-                       :direction                 Direction
-                       :amount                    value/NonNegativeInt
-                       :date                      s/Inst
-                       (s/optional-key :counterparty) s/Str
-                       (s/optional-key :description)  s/Str
-                       :shared?                   s/Bool
-                       :installments              [Installment]})
+  #:financial-movement{:id            s/Uuid
+                       :type          Type
+                       :direction     Direction
+                       :amount        value/NonNegativeInt
+                       :date          s/Inst
+                       (s/optional-key :financial-movement/counterparty) s/Str
+                       (s/optional-key :financial-movement/description)  s/Str
+                       :shared?       s/Bool
+                       :installments  [Installment]})
 
 (s/defschema FinancialMovement
   (s/conditional
@@ -41,14 +37,15 @@
    (merge FinancialMovementBase models.stock/StockFields)))
 
 (s/defschema FinancialMovementInput
-  #:financial-movement{:type                         Type
-                       :direction                    Direction
-                       :date                         s/Inst
-                       (s/optional-key :counterparty) s/Str
-                       (s/optional-key :description)  s/Str
-                       :shared?                      s/Bool
-                       :items                        [models.stock/StockLine]
-                       (s/optional-key :installments) [InstallmentInput]})
+  #:financial-movement{:type       Type
+                       :direction  Direction
+                       :date       s/Inst
+                       (s/optional-key :financial-movement/counterparty)       s/Str
+                       (s/optional-key :financial-movement/description)        s/Str
+                       :shared?    s/Bool
+                       :items      [models.stock/StockLineInput]
+                       (s/optional-key :financial-movement/installments-count) s/Int
+                       (s/optional-key :financial-movement/down-payment)       value/NonNegativeInt})
 
 (s/defschema PaginatedFinancialMovement
   {:items       [FinancialMovement]

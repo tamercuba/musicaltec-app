@@ -9,7 +9,7 @@
     (is (= 1 (:stock-item/quantity m)))
     (is (= 0 (:stock-item/cost m)))
     (is (= 0 (:stock-item/default-price m)))
-    (is (= :in-stock (:stock-item/status m)))))
+    (is (true? (:stock-item/available? m)))))
 
 (deftest dto->model-keeps-provided-values
   (let [m (mappers.stock-item/dto->model {:name "Sax Alto" :brand "Yamaha" :quantity 2 :cost 100000 :default-price 150000})]
@@ -19,8 +19,8 @@
     (is (= 150000 (:stock-item/default-price m)))))
 
 (deftest model->dto-roundtrip
-  (let [m (mappers.stock-item/dto->model {:name "Sax Alto" :cost 100000})
+  (let [m   (mappers.stock-item/dto->model {:name "Sax Alto" :cost 100000})
         dto (mappers.stock-item/model->dto m)]
     (is (string? (:id dto)))
     (is (= "Sax Alto" (:name dto)))
-    (is (= :in-stock (:status dto)))))
+    (is (true? (:available? dto)))))

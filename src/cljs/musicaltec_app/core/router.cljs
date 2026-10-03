@@ -6,7 +6,8 @@
 (def routes
   [["/" {:name :home}]
    ["/login" {:name :login}]
-   ["/customers" {:name :customers}]])
+   ["/customers" {:name :customers}]
+   ["/stock" {:name :stock}]])
 
 (def router
   (rfr/router routes))
@@ -22,10 +23,13 @@
    (let [route {:name (get-in match [:data :name])
                 :path-params (get match :path-params {})
                 :query-params (get match :query-params {})}
+         load-event (case (:name route)
+                      :customers :customers/load
+                      :stock     :stock/load
+                      nil)
          fx {:db (assoc db :route route)}]
-     (if (and (= (:name route) :customers)
-              (get-in db [:auth :logged-in?]))
-       (assoc fx :dispatch [:customers/load])
+     (if (and load-event (get-in db [:auth :logged-in?]))
+       (assoc fx :dispatch [load-event])
        fx))))
 
 (rf/reg-sub :route      (fn [db _] (:route db)))

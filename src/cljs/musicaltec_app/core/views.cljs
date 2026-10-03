@@ -2,6 +2,7 @@
   (:require [re-frame.core :as rf]
             [musicaltec-app.auth.views :as auth]
             [musicaltec-app.customers.views :as customers]
+            [musicaltec-app.stock.views :as stock]
             [musicaltec-app.core.views.layout :as layout]))
 
 (defn- not-found []
@@ -17,4 +18,5 @@
       (not logged-in?)          [auth/login-page]
       (= route-name :home)      [layout/home]
       (= route-name :customers) [customers/customers-page]
+      (= route-name :stock)     [stock/stock-page]
       :else                     [not-found])))

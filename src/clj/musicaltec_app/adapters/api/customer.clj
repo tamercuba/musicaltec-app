@@ -9,39 +9,39 @@
 (defn- created    [body] {:status 201 :body body})
 (defn- no-content [_]    {:status 204})
 
-(s/defn create-handler :- s/Any
-  [{:keys [dto adapters]} :- s/Any]
+(defn create-handler
+  [{:keys [dto adapters]}]
   (-> dto
       mappers.customer/dto->model
       (use-cases.customer/create adapters)
       mappers.customer/model->dto
       created))
 
-(s/defn list-handler :- s/Any
-  [{:keys [dto adapters]} :- s/Any]
+(defn list-handler
+  [{:keys [dto adapters]}]
   (-> dto
       mappers.pagination/dto->model
       (use-cases.customer/list adapters)
       (mappers.pagination/model->dto mappers.customer/model->dto)
       ok))
 
-(s/defn get-handler :- s/Any
-  [{:keys [dto adapters]} :- s/Any]
+(defn get-handler
+  [{:keys [dto adapters]}]
   (-> (:id dto)
       (use-cases.customer/get adapters)
       mappers.customer/model->dto
       ok))
 
-(s/defn update-handler :- s/Any
-  [{:keys [dto adapters]} :- s/Any]
+(s/defn update-handler
+  [{:keys [dto adapters]}]
   (-> dto
       mappers.customer/update-dto->model
       (use-cases.customer/update adapters)
       mappers.customer/model->dto
       ok))
 
-(s/defn delete-handler :- s/Any
-  [{:keys [dto adapters]} :- s/Any]
+(defn delete-handler
+  [{:keys [dto adapters]}]
   (-> dto
       :id
       (use-cases.customer/delete adapters)
@@ -49,15 +49,15 @@
 
 (def routes
   [["/customers"
-    {:post   {:handler create-handler
+    {:post   {:handler    create-handler
               :parameters {:body dtos.in.customer/CreateCustomerIn}}
-     :get    {:handler list-handler
+     :get    {:handler    list-handler
               :parameters {:query dtos.in.customer/ListCustomersIn}}}]
    ["/customers/:id"
-    {:get    {:handler get-handler
+    {:get    {:handler    get-handler
               :parameters {:path {:id s/Uuid}}}
-     :put    {:handler update-handler
+     :put    {:handler    update-handler
               :parameters {:path {:id s/Uuid}
                            :body dtos.in.customer/CreateCustomerIn}}
-     :delete {:handler delete-handler
+     :delete {:handler    delete-handler
               :parameters {:path {:id s/Uuid}}}}]])

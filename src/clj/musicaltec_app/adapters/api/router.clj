@@ -8,15 +8,14 @@
             [musicaltec-app.adapters.api.customer :as api.customer]
             [musicaltec-app.adapters.api.financial-movement :as api.financial-movement]
             [musicaltec-app.adapters.api.stock-item :as api.stock-item]
-            [musicaltec-app.adapters.api.middleware :as api.middleware]
-            [schema.core :as s]))
+            [musicaltec-app.adapters.api.middleware :as api.middleware]))
 
 (def ^:private coercion
   rcs/coercion)
 
-(s/defn router :- s/Any
-  [adapters :- s/Any
-   config :- s/Any]
+(defn router
+  [adapters
+   config]
   (ring/router
    [["/api/login" {:post (api.auth/login-handler (:password config))}]
     ["/api" (into [] cat [api.customer/routes
@@ -28,8 +27,8 @@
                         api.middleware/coerce-dto
                         (api.middleware/wrap-adapters adapters)]}}))
 
-(s/defn handler :- (s/=> s/Any s/Any)
-  [router :- s/Any]
+(defn handler
+  [router]
   (-> (ring/ring-handler router (ring/create-default-handler))
       muuntaja/wrap-params
       ring-params/wrap-params

@@ -49,3 +49,32 @@
   (if (= kind :company)
     (format-cnpj s)
     (format-cpf s)))
+
+(defn mask-brl
+  "Input mask: strips leading zeros, formats as \"R$ X,YY\".
+  Truly empty -> \"\"; all zeros -> \"R$ 0,00\"."
+  [s]
+  (let [raw (digits s)]
+    (if (seq raw)
+      (let [d (str/replace raw #"^0+" "")
+            n (count d)]
+        (cond
+          (zero? n) "R$ 0,00"
+          (= 1 n) (str "R$ 0,0" d)
+          (= 2 n) (str "R$ 0," d)
+          :else (str "R$ " (subs d 0 (- n 2)) "," (subs d (- n 2)))))
+      "")))
+
+(defn cents->brl
+  "Converts integer cents to a BRL string (e.g. 123456 -> \"R$ 1234,56\")."
+  [cents]
+  (when (number? cents)
+    (mask-brl (str cents))))
+
+(defn brl->cents
+  "Parses a BRL amount string (e.g. \"1.234,56\" or \"1234,56\") to integer cents."
+  [s]
+  (when (and s (seq s))
+    (let [v (js/parseFloat (-> s (str/replace #"[^\d,]" "") (str/replace #"," ".")))]
+      (when-not (js/isNaN v)
+        (js/Math.round (* v 100))))))

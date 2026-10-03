@@ -26,7 +26,7 @@
 
   (flow "sold item is now marked sold"
         (http/request! :sold-item :get aux.stock-items/stock-item-url)
-        (http/expect {:status 200 :body {:status "sold" :quantity 0}} :sold-item))
+        (http/expect {:status 200 :body {:available? false :quantity 0}} :sold-item))
 
   (flow "lists financial movements"
         (http/request! :movements :get "/api/financial-movements")
@@ -71,3 +71,25 @@
                                             :items     [{:stock-item-id sid :quantity 99 :unit-price 100}]}})]
              (assoc ctx :sale resp))))
         (http/expect {:status 422 :body {:code "financial-movement/stock-unavailable"}} :sale)))
+
+(defflow register-purchase-creates-new-item
+  {:init   (constantly (aux.system/new-context))
+   :cleanup aux.system/close!}
+
+  (aux.stock-items/seed!)
+
+  (flow "creates a new item via purchase"
+        (state/modify
+         (fn [ctx]
+           (let [resp (http/request ctx :post "/api/financial-movements"
+                                    {:body {:type      "stock"
+                                            :direction "out"
+                                            :date      "2026-01-15T00:00:00.000-00:00"
+                                            :counterparty "Celso do Gelo"
+                                            :items     [{:name "Flauta" :brand "Yamaha" :quantity 1 :unit-price 80000 :default-price 120000}]}})]
+             (assoc ctx :purchase resp))))
+        (http/expect {:status 201 :body {:direction "out" :amount 80000 :counterparty "Celso do Gelo"}} :purchase))
+
+  (flow "new item appears in stock"
+        (http/request! :stock :get "/api/stock-items")
+        (http/expect {:status 200 :body {:total 2}} :stock)))

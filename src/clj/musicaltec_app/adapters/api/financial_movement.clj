@@ -8,24 +8,24 @@
 (defn- ok      [body] {:status 200 :body body})
 (defn- created [body] {:status 201 :body body})
 
-(s/defn register-handler :- s/Any
-  [{:keys [dto adapters]} :- s/Any]
+(defn register-handler
+  [{:keys [dto adapters]}]
   (-> dto
       mappers.financial-movement/dto->model
       (use-cases.financial-movement/register adapters)
       mappers.financial-movement/model->dto
       created))
 
-(s/defn list-handler :- s/Any
-  [{:keys [dto adapters]} :- s/Any]
+(defn list-handler
+  [{:keys [dto adapters]}]
   (-> dto
       mappers.pagination/query->model
       (use-cases.financial-movement/list adapters)
       (mappers.pagination/paginated->dto mappers.financial-movement/model->dto)
       ok))
 
-(s/defn get-handler :- s/Any
-  [{:keys [dto adapters]} :- s/Any]
+(defn get-handler
+  [{:keys [dto adapters]}]
   (-> (:id dto)
       (use-cases.financial-movement/get adapters)
       mappers.financial-movement/model->dto
@@ -33,10 +33,10 @@
 
 (def routes
   [["/financial-movements"
-    {:post {:handler register-handler
+    {:post {:handler    register-handler
             :parameters {:body dtos.in.financial-movement/CreateFinancialMovementIn}}
-     :get  {:handler list-handler
+     :get  {:handler    list-handler
             :parameters {:query dtos.in.financial-movement/ListFinancialMovementsIn}}}]
    ["/financial-movements/:id"
-    {:get {:handler get-handler
-           :parameters {:path {:id s/Uuid}}}}]])
+    {:get {:handler     get-handler
+           :parameters  {:path {:id s/Uuid}}}}]])

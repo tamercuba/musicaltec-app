@@ -5,26 +5,31 @@
             [musicaltec-app.ports.dtos.db.financial-movement :as dtos.db.financial-movement]
             [schema.core :as s]))
 
-(defn- ->stock-line [{:keys [stock-item-id quantity unit-price]}]
-  #:stock-line{:stock-item-id stock-item-id
-               :quantity      quantity
-               :unit-price    unit-price})
-
-(defn- installment-input->model [{:keys [due-date amount]}]
-  #:installment{:due-date due-date
-                :amount   amount})
+(defn- ->line [{:keys [stock-item-id name brand quantity unit-price default-price serial notes]}]
+  (cond
+    stock-item-id #:stock-line{:stock-item-id stock-item-id
+                               :quantity      quantity
+                               :unit-price    unit-price}
+    name          (cond-> #:stock-line{:name       name
+                                       :quantity   quantity
+                                       :unit-price unit-price}
+                    brand         (assoc :stock-line/brand brand)
+                    default-price (assoc :stock-line/default-price default-price)
+                    serial        (assoc :stock-line/serial serial)
+                    notes         (assoc :stock-line/notes notes))))
 
 (s/defn dto->model :- models.financial-movement/FinancialMovementInput
   [{:keys [type direction date counterparty
-           description shared? installments items]} :- dtos.in.financial-movement/CreateFinancialMovementIn]
+           description shared? installments-count down-payment items]} :- dtos.in.financial-movement/CreateFinancialMovementIn]
   (cond-> #:financial-movement{:type      type
                                :direction direction
                                :date      date
                                :shared?   (boolean shared?)
-                               :items     (mapv ->stock-line items)}
-    counterparty (assoc :financial-movement/counterparty counterparty)
-    description  (assoc :financial-movement/description description)
-    installments (assoc :financial-movement/installments (mapv installment-input->model installments))))
+                               :items     (mapv ->line items)}
+    counterparty       (assoc :financial-movement/counterparty counterparty)
+    description        (assoc :financial-movement/description description)
+    installments-count (assoc :financial-movement/installments-count installments-count)
+    down-payment       (assoc :financial-movement/down-payment down-payment)))
 
 (defn- normalize-installment
   [{:installment/keys [number due-date amount status responsible paid-at]}]

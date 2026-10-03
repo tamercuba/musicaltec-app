@@ -8,7 +8,7 @@
           :customer/tax-id-taken
           :customer/email-taken
           :financial-movement/stock-unavailable
-          :financial-movement/installments-mismatch
+          :financial-movement/down-payment-invalid
           :resource/not-found
           :resource/conflict))
 

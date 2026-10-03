@@ -8,9 +8,8 @@
                :quantity                                s/Int
                :cost                                    s/Int
                :default-price                           s/Int
-               :status                                  s/Keyword
+               :available?                              s/Bool
                (s/optional-key :stock-item/brand)       s/Str
                (s/optional-key :stock-item/acquired-at) s/Inst
                (s/optional-key :stock-item/serial)      s/Str
-               (s/optional-key :stock-item/notes)       s/Str
-               (s/optional-key :stock-item/sold-at)     s/Inst})
+               (s/optional-key :stock-item/notes)       s/Str})
