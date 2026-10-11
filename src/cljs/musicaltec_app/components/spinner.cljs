@@ -1,11 +1,12 @@
-(ns musicaltec-app.components.spinner)
+(ns musicaltec-app.components.spinner
+  (:require [musicaltec-app.labels :as labels]))
 
 (defn spinner
   "Flowbite spinner (loading).
 
   opts — {:label \"screen-reader text\" (default \"Carregando...\")}"
   ([] (spinner {}))
-  ([{:keys [label] :or {label "Carregando..."}}]
+  ([{:keys [label] :or {label (labels/label :base/loading)}}]
    [:div {:role "status"}
     [:svg {:aria-hidden "true"
            :class "w-8 h-8 text-neutral-tertiary animate-spin fill-brand"

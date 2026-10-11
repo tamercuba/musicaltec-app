@@ -6,7 +6,8 @@
             [musicaltec-app.components.card :as card]
             [musicaltec-app.components.form :as form]
             [musicaltec-app.components.icons :as icons]
-            [musicaltec-app.core.config :as config]))
+            [musicaltec-app.core.config :as config]
+            [musicaltec-app.labels :as labels]))
 
 (defn login-page []
   (let [password (r/atom "")]
@@ -24,7 +25,7 @@
                      [:form {:on-submit (fn [e]
                                           (.preventDefault e)
                                           (rf/dispatch [:auth/login @password]))}
-                      (form/label {:for "password"} "Senha")
+                      (form/label {:for "password"} (labels/label :auth/password))
                       (form/input {:type         "password" :id "password" :name "password"
                                    :placeholder  "••••••••"
                                    :autoComplete "current-password"
@@ -32,7 +33,7 @@
                                    :on-change    #(reset! password (.. % -target -value))
                                    :autoFocus    true})
                       [:div {:class "h-4"}]
-                      (button/button {:label    (if logging-in? "Entrando..." "Entrar")
+                      (button/button {:label    (if logging-in? (labels/label :auth/logging-in) (labels/label :auth/login))
                                       :type     "submit"
                                       :kind     :primary
                                       :class    "w-full"

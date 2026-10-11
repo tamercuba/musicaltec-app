@@ -18,7 +18,7 @@
 (defn item
   "An item of the bottom navigation.
 
-  item — {:label \"Início\" :href \"/\" :icon-path \"...\" :active? bool}"
+  item — {:label <str> :href \"/\" :icon-path \"...\" :active? bool}"
   [{:keys [label href icon-path active?]}]
   (let [color (if active? "text-fg-brand" "text-body")]
     [:a {:href href :class item-class :aria-current (when active? "page")}

@@ -1,5 +1,6 @@
 (ns musicaltec-app.core.storage
-  "Wrappers around localStorage (tolerate environments where it does not exist).")
+  "Wrappers around localStorage (tolerate environments where it does not exist)."
+  (:require [re-frame.core :as rf]))
 
 (defn get-item
   [k]
@@ -18,3 +19,11 @@
   (try
     (.removeItem js/localStorage (name k))
     (catch js/Error _ nil)))
+
+(rf/reg-fx
+ :storage/put!
+ (fn [[k v]] (put! k v)))
+
+(rf/reg-fx
+ :storage/del!
+ (fn [k] (del! k)))

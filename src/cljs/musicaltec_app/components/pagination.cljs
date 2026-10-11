@@ -1,5 +1,6 @@
 (ns musicaltec-app.components.pagination
-  (:require [musicaltec-app.components.icons :as icons]))
+  (:require [musicaltec-app.components.icons :as icons]
+            [musicaltec-app.labels :as labels]))
 
 (def nav-class
   "flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4")
@@ -35,19 +36,19 @@
   (when (pos? total)
     (let [from (inc (* (dec page) per-page))
           to   (min total (* page per-page))]
-      [:nav {:class nav-class :aria-label "Paginação"}
+      [:nav {:class nav-class :aria-label (labels/label :base/pagination-aria)}
        [:span {:class "text-sm font-normal text-body"}
-        "Mostrando "
+        (labels/label :base/showing)
         [:span {:class "font-semibold text-heading"} (str from "-" to)]
-        " de "
+        (labels/label :base/showing-of)
         [:span {:class "font-semibold text-heading"} (str total)]]
        (when (> total-pages 1)
          [:ul {:class "inline-flex items-stretch -space-x-px"}
-          (arrow-link on-page-change (max 1 (dec page)) "Anterior"
+          (arrow-link on-page-change (max 1 (dec page)) (labels/label :base/prev-page)
                       icons/prev-icon
                       (str arrow-class " rounded-l-base"))
           (for [p (range 1 (inc total-pages))]
             (page-link on-page-change p (= p page)))
-          (arrow-link on-page-change (min total-pages (inc page)) "Próxima"
+          (arrow-link on-page-change (min total-pages (inc page)) (labels/label :base/next-page)
                       icons/next-icon
                       (str arrow-class " rounded-r-base"))])])))

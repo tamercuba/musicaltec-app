@@ -11,4 +11,9 @@
         :asset-path "/js/compiled"
         :modules {:main {:init-fn musicaltec-app.core/init}}
         :dev {:devtools {:enabled true}}
-        :release {:compiler-options {:optimizations :advanced}}}}}
+        :release {:compiler-options {:optimizations :advanced}}}
+  :test {:target :node-test
+         :output-to "target/test/test.js"
+         :source-paths ["src/cljs" "src/cljc" "test/cljs"]
+         :ns-regexp "-test$"
+         :autorun true}}}

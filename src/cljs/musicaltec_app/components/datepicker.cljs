@@ -1,23 +1,15 @@
 (ns musicaltec-app.components.datepicker
   (:require [reagent.core :as r]
             [musicaltec-app.components.icons :as icons]
+            [musicaltec-app.labels :as labels]
             ["flowbite-datepicker" :refer [Datepicker]]))
 
 (defonce ^:private _pt-br-locale
   (let [loc (.-locales Datepicker)]
     (aset loc "pt-BR"
-          (clj->js
-           {:days       ["Domingo" "Segunda" "Terça" "Quarta" "Quinta" "Sexta" "Sábado"]
-            :daysShort  ["Dom" "Seg" "Ter" "Qua" "Qui" "Sex" "Sáb"]
-            :daysMin    ["Do" "Se" "Te" "Qu" "Qu" "Se" "Sa"]
-            :months     ["Janeiro" "Fevereiro" "Março" "Abril" "Maio" "Junho"
-                         "Julho" "Agosto" "Setembro" "Outubro" "Novembro" "Dezembro"]
-            :monthsShort ["Jan" "Fev" "Mar" "Abr" "Mai" "Jun"
-                          "Jul" "Ago" "Set" "Out" "Nov" "Dez"]
-            :today      "Hoje"
-            :clear      "Limpar"
-            :format     "dd/mm/yyyy"
-            :weekStart  0}))))
+          (clj->js (assoc labels/datepicker-locale
+                          :format "dd/mm/yyyy"
+                          :weekStart 0)))))
 
 (def ^:private input-class
   "bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full ps-10 pe-3 py-2.5 shadow-xs placeholder:text-body")
@@ -80,4 +72,4 @@
                   :class input-class
                   :ref #(reset! input* %)
                   :read-only true
-                  :placeholder (or placeholder "dd/mm/aaaa")}]])})))
+                  :placeholder (or placeholder (labels/label :base/date-placeholder))}]])})))

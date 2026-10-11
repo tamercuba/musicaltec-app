@@ -1,0 +1,37 @@
+(ns musicaltec-app.customers.labels)
+
+(def labels
+  (merge
+   #:customers{:title                  "Clientes"
+               :search-placeholder     "Buscar nome ou telefone"
+               :new-customer           "Novo cliente"
+               :phones                 "Telefone(s)"
+               :phone                  "Telefone"
+               :remove-phone           "Remover"
+               :add-phone              "Adicionar telefone"
+               :email                  "E-mail"
+               :email-placeholder      "email@exemplo.com"
+               :kind                   "Tipo"
+               :person                 "Pessoa física"
+               :company                "Pessoa jurídica"
+               :cpf                    "CPF"
+               :cnpj                   "CNPJ"
+               :cpf-mask               "000.000.000-00"
+               :cnpj-mask              "00.000.000/0000-00"
+               :edit-title             "Editar cliente"
+               :new-title              "Novo cliente"
+               :none                   "Nenhum cliente cadastrado."
+               :none-found             "Nenhum cliente encontrado."
+               :delete-confirm         "Excluir este cliente?"
+               :tax-id-mismatch-person  "CPF não corresponde ao tipo."
+               :tax-id-mismatch-company "CNPJ não corresponde ao tipo."
+               :name-required          "Nome é obrigatório."
+               :phones-required        "Informe ao menos um telefone válido."
+               :email-invalid          "E-mail inválido."
+               :kind-invalid           "Tipo inválido."
+               :cpf-invalid            "CPF inválido."
+               :cnpj-invalid           "CNPJ inválido."
+               :load-failed            "Não foi possível carregar os clientes."
+               :delete-failed          "Não foi possível excluir o cliente."}
+   {:customer/tax-id-taken "CPF/CNPJ já cadastrado."
+    :customer/email-taken  "E-mail já cadastrado."}))

@@ -3,11 +3,12 @@
             [musicaltec-app.auth.views :as auth]
             [musicaltec-app.customers.views :as customers]
             [musicaltec-app.stock.views :as stock]
-            [musicaltec-app.core.views.layout :as layout]))
+            [musicaltec-app.core.views.layout :as layout]
+            [musicaltec-app.labels :as labels]))
 
 (defn- not-found []
   (layout/page
-   [:h1 {:class "text-lg font-semibold text-heading"} "Página não encontrada."]))
+   [:h1 {:class "text-lg font-semibold text-heading"} (labels/label :base/page-not-found)]))
 
 (defn root []
   (let [route-name @(rf/subscribe [:route/name])

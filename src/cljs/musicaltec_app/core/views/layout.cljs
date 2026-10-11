@@ -5,7 +5,8 @@
             [musicaltec-app.components.card :as card]
             [musicaltec-app.components.icons :as icons]
             [musicaltec-app.components.theme-toggle :as theme-toggle]
-            [musicaltec-app.core.config :as config]))
+            [musicaltec-app.core.config :as config]
+            [musicaltec-app.labels :as labels]))
 
 (defn navbar []
   [:nav {:class "fixed top-0 z-40 w-full bg-neutral-primary-soft border-b border-default"}
@@ -17,12 +18,12 @@
     (theme-toggle/theme-toggle)]])
 
 (defn nav-items [active-name]
-  [{:label "Início" :href (rfe/href :home) :icon-path icons/home-path :active? (= active-name :home)}
-   {:label "OS" :href "#" :icon-path icons/os-path :active? false}
-   {:label "Vendas" :href "#" :icon-path icons/sales-path :active? false}
-   {:label "Estoque" :href (rfe/href :stock) :icon-path icons/inventory-path :active? (= active-name :stock)}
-   {:label "Financeiro" :href "#" :icon-path icons/finances-path :active? false}
-   {:label "Clientes" :href (rfe/href :customers) :icon-path icons/users-path :active? (= active-name :customers)}])
+  [{:label (labels/label :base/nav-home) :href (rfe/href :home) :icon-path icons/home-path :active? (= active-name :home)}
+   {:label (labels/label :base/nav-os) :href "#" :icon-path icons/os-path :active? false}
+   {:label (labels/label :base/nav-sales) :href "#" :icon-path icons/sales-path :active? false}
+   {:label (labels/label :base/nav-stock) :href (rfe/href :stock) :icon-path icons/inventory-path :active? (= active-name :stock)}
+   {:label (labels/label :base/nav-finances) :href "#" :icon-path icons/finances-path :active? false}
+   {:label (labels/label :base/nav-customers) :href (rfe/href :customers) :icon-path icons/users-path :active? (= active-name :customers)}])
 
 (defn page [& body]
   (let [active-name @(rf/subscribe [:route/name])]
@@ -35,5 +36,5 @@
 (defn home []
   (page
    (card/card {:class "p-6"}
-              [:h1 {:class "text-2xl font-semibold text-heading"} "Início"]
-              [:p {:class "mt-2 text-body"} "Bem-vindo ao Musical Tec."])))
+              [:h1 {:class "text-2xl font-semibold text-heading"} (labels/label :base/nav-home)]
+              [:p {:class "mt-2 text-body"} (labels/label :base/welcome)])))

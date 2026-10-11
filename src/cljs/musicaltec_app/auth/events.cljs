@@ -1,55 +1,23 @@
 (ns musicaltec-app.auth.events
   (:require [re-frame.core :as rf]
-            [musicaltec-app.core.storage :as storage]))
+            [musicaltec-app.auth.logic :as logic.auth]))
 
 (rf/reg-event-fx
  :auth/login
- (fn [{:keys [db]} [_ password]]
-   {:db (-> db
-            (assoc-in [:auth :logging-in?] true)
-            (assoc-in [:auth :login-error] nil))
-    :http {:method :post
-           :url "/api/login"
-           :basic-password password
-           :on-success [:auth/login-success]
-           :on-failure [:auth/login-failure]}}))
+ (fn [{:keys [db]} [_ password]] (logic.auth/login db password)))
 
 (rf/reg-event-fx
  :auth/login-success
- (fn [{:keys [db]} [_ {:keys [csrf-token]}]]
-   (storage/put! :csrf-token csrf-token)
-   {:db (-> db
-            (assoc-in [:auth :logged-in?] true)
-            (assoc-in [:auth :logging-in?] false)
-            (assoc-in [:auth :csrf-token] csrf-token)
-            (assoc-in [:auth :login-error] nil))
-    :navigate :customers}))
+ (fn [{:keys [db]} [_ payload]] (logic.auth/login-success db payload)))
 
 (rf/reg-event-db
  :auth/login-failure
- (fn [db [_ {:keys [code]}]]
-   (-> db
-       (assoc-in [:auth :logging-in?] false)
-       (assoc-in [:auth :login-error]
-                 (case code
-                   :auth/invalid-credentials "Senha incorreta."
-                   "Não foi possível entrar.")))))
+ (fn [db [_ {:keys [code]}]] (logic.auth/login-failure db code)))
 
 (rf/reg-event-fx
  :auth/logout
- (fn [{:keys [db]} _]
-   (storage/del! :csrf-token)
-   {:db (-> db
-            (assoc-in [:auth :logged-in?] false)
-            (assoc-in [:auth :csrf-token] nil)
-            (assoc-in [:auth :login-error] nil))
-    :navigate :login}))
+ (fn [{:keys [db]} _] (logic.auth/logout db)))
 
 (rf/reg-event-fx
  :auth/expired
- (fn [{:keys [db]} _]
-   (storage/del! :csrf-token)
-   {:db (-> db
-            (assoc-in [:auth :logged-in?] false)
-            (assoc-in [:auth :csrf-token] nil))
-    :navigate :login}))
+ (fn [{:keys [db]} _] (logic.auth/expired db)))
