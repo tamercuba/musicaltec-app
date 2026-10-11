@@ -2,7 +2,12 @@
   :description "Sistema de gestão da oficina Musical Tec"
   :dependencies [[org.clojure/clojure "1.12.2"]
                  [thheller/shadow-cljs "3.5.0"]
-                 [com.datomic/peer "1.0.7387"]
+                 [com.github.seancorfield/next.jdbc "1.3.955"]
+                 [com.github.seancorfield/honeysql "2.6.1270"]
+                 [migratus/migratus "1.6.8"]
+                 [org.xerial/sqlite-jdbc "3.45.1.0"]
+                 [org.postgresql/postgresql "42.7.3"]
+                 [com.zaxxer/HikariCP "5.1.0"]
                  [metosin/reitit "0.10.1"]
                  [metosin/reitit-schema "0.10.1"]
                  [metosin/muuntaja "0.6.12"]

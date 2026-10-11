@@ -2,9 +2,11 @@
   (:require [musicaltec-app.domain.mappers.pagination :as mappers.pagination]
             [musicaltec-app.domain.models.pagination :as models.pagination]
             [musicaltec-app.domain.models.stock-item :as models.stock-item]
+            [musicaltec-app.ports.db-value :as db-value]
             [musicaltec-app.ports.dtos.in.stock-item :as dtos.in.stock-item]
             [musicaltec-app.ports.dtos.out.stock-item :as dtos.out.stock-item]
             [musicaltec-app.ports.dtos.db.stock-item :as dtos.db.stock-item]
+            [musicaltec-app.ports.dtos.db.status :as dtos.db.status]
             [schema.core :as s]))
 
 (def ^:private default-quantity 1)
@@ -49,27 +51,32 @@
     notes       (assoc :notes notes)))
 
 (s/defn db->model :- models.stock-item/StockItem
-  [{:stock-item/keys [id name brand quantity cost default-price acquired-at available? serial notes]} :- dtos.db.stock-item/StockItemDb]
-  (cond-> #:stock-item{:id            id
+  [{:keys [id name brand quantity cost default-price acquired-at available serial notes]} :- dtos.db.stock-item/StockItemDb]
+  (cond-> #:stock-item{:id            (db-value/str->uuid id)
                        :name          name
-                       :quantity      quantity
-                       :cost          cost
-                       :default-price default-price
-                       :available?    available?}
+                       :quantity      (long quantity)
+                       :cost          (long cost)
+                       :default-price (long default-price)
+                       :available?    (db-value/int->bool available)}
     brand       (assoc :stock-item/brand brand)
-    acquired-at (assoc :stock-item/acquired-at acquired-at)
+    acquired-at (assoc :stock-item/acquired-at (db-value/str->inst acquired-at))
     serial      (assoc :stock-item/serial serial)
     notes       (assoc :stock-item/notes notes)))
 
 (s/defn model->db :- dtos.db.stock-item/StockItemDb
-  [{:stock-item/keys [id name brand quantity cost default-price acquired-at available? serial notes]} :- models.stock-item/StockItem]
-  (cond-> #:stock-item{:id            id
-                       :name          name
-                       :quantity      quantity
-                       :cost          cost
-                       :default-price default-price
-                       :available?    available?}
-    brand       (assoc :stock-item/brand brand)
-    acquired-at (assoc :stock-item/acquired-at acquired-at)
-    serial      (assoc :stock-item/serial serial)
-    notes       (assoc :stock-item/notes notes)))
+  [{:stock-item/keys [id name brand quantity cost default-price acquired-at available? serial notes]} :- models.stock-item/StockItem
+   status :- dtos.db.status/StatusDb
+   as-of  :- s/Str]
+  (cond-> {:id            (db-value/uuid->str id)
+           :name          name
+           :quantity      quantity
+           :cost          cost
+           :default-price default-price
+           :available     (db-value/bool->int available?)
+           :status        (db-value/kw->str status)
+           :created-at    as-of
+           :updated-at    as-of}
+    brand       (assoc :brand brand)
+    acquired-at (assoc :acquired-at (db-value/inst->str acquired-at))
+    serial      (assoc :serial serial)
+    notes       (assoc :notes notes)))

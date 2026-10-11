@@ -1,7 +1,5 @@
 (ns user
-  (:require [clojure.string :as str]
-            [datomic.api :as d]
-            [integrant.repl :as ig-repl]
+  (:require [integrant.repl :as ig-repl]
             [integrant.repl.state :as ig-state]
             [musicaltec-app.system :as system]
             [fixtures :as fixtures]))
@@ -13,14 +11,9 @@
 (def reset-all ig-repl/reset-all)
 
 (defn halt
-  "Stops the system and deletes the in-memory database."
+  "Stops the system."
   []
-  (let [uri (get-in ig-state/system [:musicaltec-app/config :datomic-uri])]
-    (ig-repl/halt)
-    (when (and uri (str/starts-with? uri "datomic:mem://"))
-      (try
-        (d/delete-database uri)
-        (catch Exception _ nil)))))
+  (ig-repl/halt))
 
 (defn system []
   ig-state/system)

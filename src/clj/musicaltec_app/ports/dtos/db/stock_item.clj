@@ -1,15 +1,17 @@
 (ns musicaltec-app.ports.dtos.db.stock-item
-  (:require [musicaltec-app.ports.schema :as db.schema]
-            [schema.core :as s]))
+  (:require [schema.core :as s]))
 
 (s/defschema StockItemDb
-  #:stock-item{:id                                      (db.schema/unique s/Uuid :identity)
-               :name                                    s/Str
-               :quantity                                s/Int
-               :cost                                    s/Int
-               :default-price                           s/Int
-               :available?                              s/Bool
-               (s/optional-key :stock-item/brand)       s/Str
-               (s/optional-key :stock-item/acquired-at) s/Inst
-               (s/optional-key :stock-item/serial)      s/Str
-               (s/optional-key :stock-item/notes)       s/Str})
+  {:id            s/Str
+   :name          s/Str
+   :quantity      s/Int
+   :cost          s/Int
+   :default-price s/Int
+   :available     s/Int
+   :status        s/Str
+   :created-at    s/Str
+   :updated-at    s/Str
+   (s/optional-key :brand)       (s/maybe s/Str)
+   (s/optional-key :acquired-at) (s/maybe s/Str)
+   (s/optional-key :serial)      (s/maybe s/Str)
+   (s/optional-key :notes)       (s/maybe s/Str)})

@@ -11,3 +11,5 @@ config.edn
 .nrepl-port
 resources/public/css/
 resources/public/js/
+musicaltec.db
+log
