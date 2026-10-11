@@ -15,14 +15,16 @@
    quantity :- value/NonNegativeInt]
   (>= (:stock-item/quantity item) quantity))
 
-(s/defn new-item->stock-item :- models.stock-item/StockItem
-  [{:stock-line/keys [name brand quantity unit-price default-price serial notes]} :- models.stock/NewItemLine]
+(s/defn ->new-item :- models.stock-item/StockItem
+  [{:stock-line/keys [name brand quantity unit-price default-price serial notes]} :- models.stock/NewItemLine
+   acquired-at :- s/Inst]
   (cond-> #:stock-item{:id            (random-uuid)
                        :name          name
                        :quantity      quantity
                        :cost          unit-price
                        :default-price (or default-price 0)
-                       :available?    true}
+                       :available?    true
+                       :acquired-at   acquired-at}
     brand  (assoc :stock-item/brand brand)
     serial (assoc :stock-item/serial serial)
     notes  (assoc :stock-item/notes notes)))

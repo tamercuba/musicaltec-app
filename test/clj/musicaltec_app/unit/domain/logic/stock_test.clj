@@ -29,10 +29,14 @@
   (is (true? (logic.stock/stock-available? (->stock-item 1) 1)))
   (is (false? (logic.stock/stock-available? (->stock-item 1) 2))))
 
-(deftest new-item->stock-item
-  (let [item (logic.stock/new-item->stock-item {:stock-line/name "Flauta" :stock-line/brand "Yamaha" :stock-line/quantity 1 :stock-line/unit-price 80000})]
+(deftest ->new-item
+  (let [date (java.util.Date.)
+        item (logic.stock/->new-item
+              {:stock-line/name "Flauta" :stock-line/brand "Yamaha" :stock-line/quantity 1 :stock-line/unit-price 80000}
+              date)]
     (is (= "Flauta" (:stock-item/name item)))
     (is (= "Yamaha" (:stock-item/brand item)))
     (is (= 1 (:stock-item/quantity item)))
     (is (= 80000 (:stock-item/cost item)))
-    (is (true? (:stock-item/available? item)))))
+    (is (true? (:stock-item/available? item)))
+    (is (= date (:stock-item/acquired-at item)))))

@@ -181,7 +181,9 @@
                 {:stock-item-id (:stock-item-id form) :quantity qty :unit-price price}
                 (cond-> {:name (:name form) :quantity qty :unit-price price}
                   (seq (:brand form)) (assoc :brand (:brand form))
-                  (seq (:default-price form)) (assoc :default-price (format/brl->cents (:default-price form)))))]
+                  (seq (:default-price form)) (assoc :default-price (format/brl->cents (:default-price form)))
+                  (seq (:serial form)) (assoc :serial (:serial form))
+                  (seq (:notes form)) (assoc :notes (:notes form))))]
     (cond-> {:type "stock" :direction (name direction) :date (->instant (:date form)) :shared? true :items [item]}
       (seq (:counterparty form)) (assoc :counterparty (:counterparty form))
       (:parcelado? form) (assoc :installments-count (js/parseInt (:installments-count form)))

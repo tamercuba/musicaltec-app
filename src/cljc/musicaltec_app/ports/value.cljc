@@ -67,6 +67,13 @@
   [x]
   (not (neg? x)))
 
+(defn not-future?
+  "True if the instant is not in the future."
+  [x]
+  (<= (.getTime x)
+      #?(:clj  (System/currentTimeMillis)
+         :cljs (.getTime (js/Date.)))))
+
 (def Phone
   (s/constrained s/Str phone-valid? 'phone))
 
@@ -77,3 +84,6 @@
 
 (def NonNegativeInt
   (s/constrained s/Int non-negative-int? 'non-negative-int))
+
+(def NotFutureDate
+  (s/constrained s/Inst not-future? 'not-future-date))

@@ -55,7 +55,7 @@
      (form/input {:type "text" :value cost :placeholder "R$ 0,00"
                   :on-change #(rf/dispatch [:stock/item-form-update :cost (format/mask-brl (.. % -target -value))])})
      [:div {:class "h-3"}]
-     (form/label {} "Preço de venda (R$)")
+     (form/label {} "Preço sugerido de venda")
      (form/input {:type "text" :value default-price :placeholder "R$ 0,00"
                   :on-change #(rf/dispatch [:stock/item-form-update :default-price (format/mask-brl (.. % -target -value))])})
      [:div {:class "h-3"}]
@@ -116,8 +116,8 @@
         (form/input {:type "text" :value brand
                      :on-change #(rf/dispatch [:stock/movement-form-update :brand (.. % -target -value)])})
         [:div {:class "h-3"}]
-        (form/label {} "Preço de venda (R$)")
-        (form/input {:type "text" :value default-price
+        (form/label {} "Preço sugerido de venda")
+        (form/input {:type "text" :value default-price :placeholder "R$ 0,00"
                      :on-change #(rf/dispatch [:stock/movement-form-update :default-price (format/mask-brl (.. % -target -value))])})
         [:div {:class "h-3"}]
         (form/label {} "Nº de série")
@@ -135,13 +135,14 @@
      (when (= mode :sale)
        [:p {:class "text-xs text-body"} (str "Disponível: " available-quantity)])
      [:div {:class "h-3"}]
-     (form/label {} (if (= mode :sale) "Preço de venda (R$)" "Preço de compra (R$)"))
+     (form/label {} "Valor (R$)")
      (form/input {:type "text" :value unit-price :placeholder "R$ 0,00"
                   :on-change #(rf/dispatch [:stock/movement-form-update :unit-price (format/mask-brl (.. % -target -value))])})
      [:div {:class "h-3"}]
      (form/label {} "Data")
-     (datepicker/datepicker {:value date
-                             :on-change #(rf/dispatch [:stock/movement-form-update :date %])})
+     [datepicker/datepicker {:value date
+                             :max-date (js/Date.)
+                             :on-change #(rf/dispatch [:stock/movement-form-update :date %])}]
      [:div {:class "h-3"}]
      (form/label {} (if (= mode :sale) "Cliente" "Fornecedor"))
      (counterparty-input mode counterparty)

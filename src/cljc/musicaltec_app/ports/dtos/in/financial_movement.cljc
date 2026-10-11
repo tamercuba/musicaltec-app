@@ -25,7 +25,7 @@
 (s/defschema CreateFinancialMovementIn
   {:type                            (s/enum :stock)
    :direction                       (s/enum :in :out)
-   :date                            s/Inst
+   :date                            value/NotFutureDate
    (s/optional-key :counterparty)   s/Str
    (s/optional-key :description)    s/Str
    (s/optional-key :shared?)        s/Bool

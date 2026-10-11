@@ -38,18 +38,20 @@
 (defn datepicker
   "Campo de data com o calendário do Flowbite.
 
-  opts — {:value <iso \"yyyy-mm-dd\"> :on-change (fn [iso]) :placeholder <str>}"
-  [{:keys [value on-change placeholder]}]
+  opts — {:value <iso \"yyyy-mm-dd\"> :on-change (fn [iso]) :placeholder <str>
+          :max-date <js/Date>}"
+  [{:keys [value on-change placeholder max-date]}]
   (let [inst   (r/atom nil)
         input* (r/atom nil)]
     (r/create-class
      {:component-did-mount
-      (fn [_]
+      (fn [this]
         (let [input @input*
-              dp    (Datepicker. input
-                                 #js {:format "dd/mm/yyyy"
-                                      :language "pt-BR"
-                                      :autohide true})]
+              opts  (cond-> #js {:format "dd/mm/yyyy"
+                                 :language "pt-BR"
+                                 :autohide true}
+                      max-date (doto (aset "maxDate" max-date)))
+              dp    (Datepicker. input opts)]
           (reset! inst {:dp dp :input input})
           (when value
             (.setDate dp (iso->date value)))

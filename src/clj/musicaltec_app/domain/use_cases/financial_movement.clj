@@ -19,7 +19,7 @@
                              line
                              (let [created (ports.db.stock-item/insert!
                                             stock-item-repo
-                                            (logic.stock/new-item->stock-item line))]
+                                            (logic.stock/->new-item line date))]
                                #:stock-line{:stock-item-id (:stock-item/id created)
                                             :quantity      (:stock-line/quantity line)
                                             :unit-price    (:stock-line/unit-price line)})))
