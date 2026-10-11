@@ -20,7 +20,7 @@
   "text-body bg-transparent hover:text-heading hover:bg-neutral-tertiary rounded-base w-9 h-9 absolute top-2.5 end-2.5 flex items-center justify-center")
 
 (defn drawer
-  "Drawer lateral direito (off-canvas).
+  "Right-side drawer (off-canvas).
 
   opts — {:id \"x\" :title \"...\" :body <hiccup> :open? bool :on-close fn}"
   [{:keys [id title body open? on-close]}]

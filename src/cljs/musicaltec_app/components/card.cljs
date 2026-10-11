@@ -5,9 +5,9 @@
   "bg-neutral-primary-soft border border-default rounded-base shadow-xs")
 
 (defn card
-  "Container com fundo branco, borda e sombra.
+  "Container with white background, border and shadow.
 
-  (card attrs & body) — attrs mergeados ao default (:class é concatenado)."
+  (card attrs & body) — attrs merged into the default (:class is concatenated)."
   [attrs & body]
   [:div (u/merge-attrs {:class card-class} attrs)
    body])

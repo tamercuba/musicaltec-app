@@ -1,9 +1,9 @@
 (ns musicaltec-app.components.spinner)
 
 (defn spinner
-  "Spinner (loading) do Flowbite.
+  "Flowbite spinner (loading).
 
-  opts — {:label \"texto para screen-reader\" (default \"Carregando...\")}"
+  opts — {:label \"screen-reader text\" (default \"Carregando...\")}"
   ([] (spinner {}))
   ([{:keys [label] :or {label "Carregando..."}}]
    [:div {:role "status"}

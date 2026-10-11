@@ -26,12 +26,12 @@
 (defn button
   "Renders a Flowbite `<button>`.
 
-  opts — {:label \"texto\"
+  opts — {:label \"text\"
           :type  :button | :submit | :reset   (default :button)
           :kind  :primary | :secondary | :tertiary | :success | :danger | :ghost
           :size  :xs | :sm | :base | :lg | :xl
           ...}
-  As demais chaves são mergeadas como atributos HTML (ex.: :class, :disabled,
+  The remaining keys are merged as HTML attributes (e.g. :class, :disabled,
   :on-click)."
   [{:keys [label type kind size] :or {type :button kind :primary size :base} :as opts}]
   [:button (u/merge-attrs {:type (name type) :class (button-class kind size)}
@@ -39,7 +39,7 @@
    label])
 
 (defn button-link
-  "Igual a `button`, mas renderiza um `<a>` (para navegação). Requer :href."
+  "Like `button`, but renders an `<a>` (for navigation). Requires :href."
   [{:keys [label href kind size] :or {kind :primary size :base} :as opts}]
   [:a (u/merge-attrs {:href href :class (button-class kind size)}
                      (dissoc opts :label :href :kind :size))
@@ -51,7 +51,7 @@
 (defn link
   "Renders a text link (`<a>`).
 
-  opts — {:label \"texto\" :href \"/x\" :kind :brand | :danger (default :brand) ...}"
+  opts — {:label \"text\" :href \"/x\" :kind :brand | :danger (default :brand) ...}"
   [{:keys [label href kind] :or {kind :brand} :as opts}]
   [:a (u/merge-attrs {:href href
                       :class (if (= kind :danger) link-danger-class link-class)}

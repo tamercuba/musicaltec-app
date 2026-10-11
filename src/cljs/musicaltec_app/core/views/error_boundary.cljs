@@ -7,7 +7,7 @@
      {:display-name "error-boundary"
       :component-did-catch
       (fn [_this e info]
-        (js/console.error "Erro de renderização:" e info)
+        (js/console.error "Render error:" e info)
         (reset! error e))
       :reagent-render
       (fn [& children]
@@ -19,7 +19,7 @@
                          :font-family "monospace"
                          :font-size "14px"}}
            [:h1 {:style {:font-size "1.5rem" :margin-bottom "1rem"}}
-            "Erro de renderização"]
+            "Render error"]
            [:pre {:style {:white-space "pre-wrap" :margin-bottom "1rem"}}
             (str e)]
            [:pre {:style {:white-space "pre-wrap"}}

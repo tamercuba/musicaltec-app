@@ -30,10 +30,10 @@
             :else                [cookie]))))
 
 (defn request
-  "Executa uma requisição HTTP autenticada contra o handler do contexto e
-  retorna o response com `:body` parseado como JSON.
+  "Runs an authenticated HTTP request against the context handler and
+  returns the response with `:body` parsed as JSON.
 
-  opts — {:body _ (estrutura JSON)  :auth \"Basic ...\"}"
+  opts — {:body _ (JSON structure)  :auth \"Basic ...\"}"
   [ctx method uri & [opts]]
   (let [{:keys [body auth]} opts]
     (-> (mock/request method uri)
@@ -46,27 +46,26 @@
         parse-json)))
 
 (defn request!
-  "Passo de state-flow: executa `request` e guarda o response em `key`.
+  "State-flow step: runs `request` and stores the response in `key`.
 
-  `uri` pode ser uma string ou uma função de ctx (ex.: montar a URL a partir
-  do id criado)."
+  `uri` may be a string or a fn of ctx (e.g. build the URL from the created id)."
   [key method uri & [opts]]
   (state/modify
    (fn [ctx]
      (assoc ctx key (request ctx method (if (fn? uri) (uri ctx) uri) opts)))))
 
 (defn expect
-  "Passo de state-flow: assere que o response guardado em `key` casa com `matcher`."
+  "State-flow step: asserts that the response stored in `key` matches `matcher`."
   [matcher key]
   (match? matcher (state/gets key)))
 
 (defn login!
-  "Passo de state-flow: faz login (Basic Auth) e guarda `:session`, `:csrf` e
-  `:login` no contexto."
+  "State-flow step: logs in (Basic Auth) and stores `:session`, `:csrf` and
+  `:login` in the context."
   [password]
   (state/modify
    (fn [ctx]
      (let [resp (request ctx :post "/api/login" {:auth (basic-auth password)})]
        (assoc ctx :session (session-id resp)
-                  :csrf    (-> resp :body :csrf-token)
-                  :login   resp)))))
+              :csrf    (-> resp :body :csrf-token)
+              :login   resp)))))

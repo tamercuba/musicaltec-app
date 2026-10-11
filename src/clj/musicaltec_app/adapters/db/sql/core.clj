@@ -16,7 +16,7 @@
   (cond
     (str/starts-with? database-url "jdbc:sqlite:")     (sqlite-datasource database-url)
     (str/starts-with? database-url "jdbc:postgresql:") (jdbc/get-datasource {:jdbcUrl database-url})
-    :else (throw (ex-info "database-url não suportado" {:url database-url}))))
+    :else (throw (ex-info "unsupported database-url" {:url database-url}))))
 
 (defn migrate!
   [datasource migration-dir]
@@ -24,7 +24,7 @@
                                   :db            {:datasource datasource}
                                   :migration-dir migration-dir})]
     (when (not (nil? result))
-      (throw (ex-info "Migração de schema falhou" {:result result})))))
+      (throw (ex-info "schema migration failed" {:result result})))))
 
 (def ^:private builder-fn rs/as-unqualified-kebab-maps)
 

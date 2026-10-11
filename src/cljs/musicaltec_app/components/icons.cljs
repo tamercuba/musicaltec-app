@@ -1,7 +1,7 @@
 (ns musicaltec-app.components.icons)
 
 (defn stroke-icon
-  "Ícone outline (stroke), viewBox 24x24."
+  "Outline icon (stroke), viewBox 24x24."
   [path & [class]]
   [:svg {:class (or class "w-4 h-4")
          :aria-hidden "true"

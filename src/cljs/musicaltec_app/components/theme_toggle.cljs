@@ -6,7 +6,7 @@
   "text-body hover:text-heading hover:bg-neutral-tertiary focus:outline-none focus:ring-4 focus:ring-neutral-tertiary rounded-base text-sm p-2.5")
 
 (defn theme-toggle
-  "Botão para alternar entre modo claro e escuro (dark mode)."
+  "Button to toggle between light and dark mode."
   []
   (let [dark? @(rf/subscribe [:theme/dark?])]
     [:button {:type "button" :class button-class

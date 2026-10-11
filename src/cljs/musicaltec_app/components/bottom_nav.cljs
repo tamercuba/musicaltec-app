@@ -16,7 +16,7 @@
    6 "grid-cols-6"})
 
 (defn item
-  "Um item da bottom navigation.
+  "An item of the bottom navigation.
 
   item — {:label \"Início\" :href \"/\" :icon-path \"...\" :active? bool}"
   [{:keys [label href icon-path active?]}]
@@ -31,7 +31,7 @@
       label]]))
 
 (defn bottom-nav
-  "Barra de navegação inferior (bottom navigation).
+  "Bottom navigation bar.
 
   opts — {:items [item ...]}"
   [{:keys [items]}]

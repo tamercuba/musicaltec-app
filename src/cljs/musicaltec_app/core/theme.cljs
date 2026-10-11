@@ -1,6 +1,6 @@
 (ns musicaltec-app.core.theme
-  "Dark mode. A classe `dark` é aplicada no <html> (o index.html já a define
-  antes do render, evitando FOUC). A preferência é persistida em localStorage."
+  "Dark mode. The `dark` class is applied to <html> (index.html already sets it
+  before render, avoiding FOUC). The preference is persisted in localStorage."
   (:require [re-frame.core :as rf]
             [musicaltec-app.core.storage :as storage]))
 

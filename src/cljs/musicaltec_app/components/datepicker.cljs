@@ -36,7 +36,7 @@
     (str (.getFullYear d) "-" (pad (inc (.getMonth d))) "-" (pad (.getDate d)))))
 
 (defn datepicker
-  "Campo de data com o calendário do Flowbite.
+  "Flowbite date field (calendar picker).
 
   opts — {:value <iso \"yyyy-mm-dd\"> :on-change (fn [iso]) :placeholder <str>
           :max-date <js/Date>}"

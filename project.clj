@@ -1,5 +1,5 @@
 (defproject musicaltec-app "0.1.0"
-  :description "Sistema de gestão da oficina Musical Tec"
+  :description "Management system for the Musical Tec workshop"
   :dependencies [[org.clojure/clojure "1.12.2"]
                  [thheller/shadow-cljs "3.5.0"]
                  [com.github.seancorfield/next.jdbc "1.3.955"]

@@ -8,7 +8,7 @@
    :neutral "p-4 mb-4 text-sm text-heading rounded-base bg-neutral-secondary-medium"})
 
 (defn alert
-  "Alerta do Flowbite.
+  "Flowbite alert.
 
   opts — {:kind :danger | :brand | :success | :warning | :neutral (default :danger)
           :body <hiccup>}"

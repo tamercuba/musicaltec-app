@@ -1,16 +1,16 @@
 (ns musicaltec-app.core.http
-  "Efeito re-frame :http baseado em js/fetch.
+  "re-frame :http effect based on js/fetch.
 
-  Contrato do efeito:
+  Effect contract:
     {:method        :get | :post | :put | :delete   (default :get)
      :url           \"/api/...\"
-     :body          map (serializado como JSON)
+     :body          map (serialized as JSON)
      :basic-password \"...\"  ; login via Basic Auth (Authorization)
-     :on-success    [:event-id]      ; despacha (conj on-success body-parsed)
-     :on-failure    [:event-id]}     ; despacha (conj on-failure {:status .. :code ..})
+     :on-success    [:event-id]      ; dispatches (conj on-success body-parsed)
+     :on-failure    [:event-id]}     ; dispatches (conj on-failure {:status .. :code ..})
 
-  Cookies da sessão são enviados via `credentials: same-origin`. Para métodos
-  não-seguros, o header `X-CSRF-Token` é anexado quando há token salvo."
+  Session cookies are sent via `credentials: same-origin`. For unsafe methods,
+  the `X-CSRF-Token` header is attached when a token is stored."
   (:require [re-frame.core :as rf]
             [musicaltec-app.core.storage :as storage]))
 

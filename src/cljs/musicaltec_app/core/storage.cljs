@@ -1,5 +1,5 @@
 (ns musicaltec-app.core.storage
-  "Wrappers sobre o localStorage (toleram ambientes onde ele não existe).")
+  "Wrappers around localStorage (tolerate environments where it does not exist).")
 
 (defn get-item
   [k]

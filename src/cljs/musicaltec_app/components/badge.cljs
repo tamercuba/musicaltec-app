@@ -8,9 +8,9 @@
    :warning "bg-warning-soft text-fg-warning text-xs font-medium px-1.5 py-0.5 rounded"})
 
 (defn badge
-  "Badge do Flowbite.
+  "Flowbite badge.
 
   opts — {:kind :brand | :neutral | :danger | :success | :warning (default :neutral)
-          :label \"texto\"}"
+          :label \"text\"}"
   [{:keys [kind label] :or {kind :neutral}}]
   [:span {:class (kind-class kind)} label])

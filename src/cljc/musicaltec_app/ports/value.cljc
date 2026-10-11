@@ -3,33 +3,33 @@
             [schema.core :as s]))
 
 (defn phone-valid?
-  "Telefone brasileiro canônico: 10 (fixo) ou 11 (celular) dígitos."
+  "Canonical Brazilian phone number: 10 (landline) or 11 (mobile) digits."
   [phone]
   (and (string? phone)
        (boolean (re-matches #"\d{10,11}" phone))))
 
 (defn- digit-value
-  "Valor numérico (0-9) de um char de dígito."
+  "Numeric value (0-9) of a digit char."
   [c]
   #?(:clj  (Character/digit c 10)
      :cljs (js/parseInt (str c) 10)))
 
 (defn- alnum-char-value
-  "Valor de um char alfanumérico no CNPJ: 0-9 -> 0-9, A -> 17 ... Z -> 42."
+  "Value of an alphanumeric char in a CNPJ: 0-9 -> 0-9, A -> 17 ... Z -> 42."
   [c]
   (let [code #?(:clj  (int (Character/toUpperCase c))
                 :cljs (.charCodeAt (str/upper-case c) 0))]
     (- code 48)))
 
 (defn mod-11-dv
-  "Dígito verificador módulo 11, dado uma sequência de valores e seus pesos.
-  Público para permitir gerar tax-ids válidos (ex.: seed/geradores)."
+  "Mod 11 check digit, given a sequence of values and their weights.
+  Public to allow generating valid tax-ids (e.g. seed/generators)."
   [values weights]
   (let [rem (mod (reduce + (map * values weights)) 11)]
     (if (< rem 2) 0 (- 11 rem))))
 
 (defn person-tax-id-valid?
-  "CPF canônico válido (11 dígitos + dígitos verificadores)."
+  "Valid canonical CPF (11 digits + check digits)."
   [cpf]
   (and (string? cpf)
        (boolean (re-matches #"\d{11}" cpf))
@@ -39,7 +39,7 @@
               (= (mod-11-dv (take 10 digits) (range 11 1 -1)) (nth digits 10))))))
 
 (defn company-tax-id-valid?
-  "CNPJ canônico válido (12 alfanuméricos + 2 dígitos verificadores)."
+  "Valid canonical CNPJ (12 alphanumeric + 2 check digits)."
   [cnpj]
   (and (string? cnpj)
        (let [cnpj (-> cnpj str/upper-case (str/replace #"[^0-9A-Z]" ""))]
@@ -55,7 +55,7 @@
                         (digit-value dv2))))))))
 
 (defn tax-id-matches-kind?
-  "Tax-id canônico é válido para o kind (CPF para :person, CNPJ para :company)."
+  "Canonical tax-id is valid for the kind (CPF for :person, CNPJ for :company)."
   [kind tax-id]
   (case kind
     :person  (person-tax-id-valid? tax-id)
